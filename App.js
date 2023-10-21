@@ -1,11 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import PreLogin from './componentes/LoginInmobiliaria/preLogin';
+import RegisterInmobiliaria from './componentes/LoginInmobiliaria/registerInmobiliaria';
+
+const fondo = require('./assets/fondo.jpeg');
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Hello world!</Text>
-      <StatusBar style="auto" />
+      <ImageBackground source={fondo} resizeMode='cover' style={styles.estiloFondo}>
+        <RegisterInmobiliaria></RegisterInmobiliaria>
+      </ImageBackground>
+      
     </View>
   );
 }
@@ -13,8 +19,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  estiloFondo: {
+    flex: 1,
     justifyContent: 'center',
   },
 });
