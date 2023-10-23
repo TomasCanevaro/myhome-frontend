@@ -2,13 +2,13 @@ import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export default function PreLogin() {
+export default function PreLogin({navigation}) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.boton} title="Press me" onPress={() => console.log("Boton presionado")} >
+      <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('logearInmobiliaria')} >
         <Text style={styles.textoBoton}>Ya tengo usuario</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.boton} title="Press me" onPress={() => console.log("Boton presionado")} >
+      <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('registrarInmobiliaria')} >
         <Text style={styles.textoBoton}>Quiero registrar mi inmobiliaria</Text>
       </TouchableOpacity>
     </View>
