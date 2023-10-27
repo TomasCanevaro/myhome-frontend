@@ -6,6 +6,7 @@ import LoginInmobiliaria from './componentes/LogeoInmobiliaria/loginInmobiliaria
 import RecuperarClave from './componentes/LogeoInmobiliaria/recuperarClave';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import MainPageInmobiliaria from './componentes/MainInmobiliaria/mainPageInmobiliaria';
 
 
 const fondo = require('./assets/fondo.jpeg');
@@ -29,6 +30,7 @@ export default function App() {
             <Stack.Screen name="registrarInmobiliaria" component={RegisterInmobiliaria} />
             <Stack.Screen name="logearInmobiliaria" component={LoginInmobiliaria} />
             <Stack.Screen name="recuperarClave" component={RecuperarClave} />
+            <Stack.Screen name="mainPageInmobiliaria" component={MainPageInmobiliaria} />
           </Stack.Navigator>
         </View>
       </NavigationContainer>
