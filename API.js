@@ -4,24 +4,26 @@ export async function contactBackend(endpoint, accessRequired = false, method = 
 
     try {
 
-        let urlString = (secure ? "https://" : "http://") + 
-        (backendURL) + 
-        (endpoint) +
-        (queryParams ? "?" + new URLSearchParams(queryParams) : "" )
+        let urlString = (secure ? "https://" : "http://") +
+            (backendURL) +
+            (endpoint) +
+            (queryParams ? "?" + new URLSearchParams(queryParams) : "")
 
         let optionsObj = {
             method: method
         }
 
-        if (accessRequired) { optionsObj["headers"] = {};
-        optionsObj.headers["x-access-token"] = localStorage.getItem('token') };
+        if (accessRequired) {
+            optionsObj["headers"] = {};
+            optionsObj.headers["x-access-token"] = localStorage.getItem('token')
+        };
 
-        if (body) { 
-            { 
+        if (body) {
+            {
                 optionsObj["headers"] = {};
-                optionsObj["body"] = JSON.stringify(body); 
-                optionsObj.headers["Content-Type"] = "application/json"; 
-            } 
+                optionsObj["body"] = JSON.stringify(body);
+                optionsObj.headers["Content-Type"] = "application/json";
+            }
         };
 
         console.log(optionsObj)

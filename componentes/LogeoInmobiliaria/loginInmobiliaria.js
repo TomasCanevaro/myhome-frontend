@@ -57,7 +57,7 @@ export default function LoginInmobiliaria({navigation}) {
                 onChangeText={setPassword}
                  />
             </View>
-            <TouchableOpacity style={styles.boton} title="Login" onPress={handleSubmit}  >
+            <TouchableOpacity style={styles.boton} title="Login" onPress={() => navigation.navigate('mainPageInmobiliaria')}  >
                 <Text style={styles.textoBoton}>Iniciar sesión</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.botonChico} title="olvideClave" onPress={() => navigation.navigate('recuperarClave')} >
