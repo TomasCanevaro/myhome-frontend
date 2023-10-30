@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import PreLogin from './componentes/LogeoInmobiliaria/preLogin';
@@ -7,6 +8,8 @@ import RecuperarClave from './componentes/LogeoInmobiliaria/recuperarClave';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainPageInmobiliaria from './componentes/MainInmobiliaria/mainPageInmobiliaria';
+import DrawerNavigation from './componentes/Navigation/drawerNavigation';
+
 
 
 const fondo = require('./assets/fondo.jpeg');
@@ -30,7 +33,7 @@ export default function App() {
             <Stack.Screen name="registrarInmobiliaria" component={RegisterInmobiliaria} />
             <Stack.Screen name="logearInmobiliaria" component={LoginInmobiliaria} />
             <Stack.Screen name="recuperarClave" component={RecuperarClave} />
-            <Stack.Screen name="mainPageInmobiliaria" component={MainPageInmobiliaria} />
+            <Stack.Screen name="mainPageInmobiliaria" component={DrawerNavigation} />
           </Stack.Navigator>
         </View>
       </NavigationContainer>
