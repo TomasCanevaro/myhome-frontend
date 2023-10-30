@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-
+import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 
 import Bienvenida from './componentes/bienvenida';
