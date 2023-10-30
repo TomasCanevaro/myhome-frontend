@@ -1,14 +1,29 @@
 import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import DrawerNavigation from '../Navigation/drawerNavigation';
+
 
 
 export default function MainPageInmobiliaria() {
     return (
-      <NavigationContainer>
-        <DrawerNavigation/>
-      </NavigationContainer>
+        <View style = {styles.container} >
+            <Text style = {styles.title}>Bienvenido, Remax 01</Text>
+        </View>
     );
   }
+
+  const styles = StyleSheet.create({
+
+    container: {
+        padding: 15,
+        alignContent: 'center',
+        alignItems: 'center'
+    },
+
+    title: {
+        fontSize: 46,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        marginTop: 150
+    }
+})
