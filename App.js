@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 
 import Bienvenida from './componentes/bienvenida';
 import UsuarioComunAcceder from './componentes/LogeoUsuario/usuarioComunAcceder';
+import UsuarioComunElegirCuenta from './componentes/LogeoUsuario/usuarioComunElegirCuenta';
+import UsuarioInicio from './componentes/LogeoUsuario/usuarioInicio';
 
 import PreLogin from './componentes/LogeoInmobiliaria/preLogin';
 import RegisterInmobiliaria from './componentes/LogeoInmobiliaria/registerInmobiliaria';
@@ -29,7 +31,11 @@ export default function App() {
         <View style={styles.container}>
           <Stack.Navigator initialRouteName="bienvenida" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="bienvenida" component={Bienvenida} />
+
             <Stack.Screen name="usuarioComunAcceder" component={UsuarioComunAcceder} />
+            <Stack.Screen name="usuarioComunElegirCuenta" component={UsuarioComunElegirCuenta} />
+            <Stack.Screen name="usuarioInicio" component={UsuarioInicio} />
+            
             <Stack.Screen name="registrarInmobiliaria" component={RegisterInmobiliaria} />
             <Stack.Screen name="prelogin" component={PreLogin} />
             <Stack.Screen name="logearInmobiliaria" component={LoginInmobiliaria} />
