@@ -3,7 +3,7 @@ import { DrawerContentScrollView, createDrawerNavigator } from "@react-navigatio
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import MenuButtonItem from '../Reusables/MenuButtonItem';
 import MainPageUsuario from '../MainUsuario/mainPageUsuario';
-import UsuarioComunAcceder from '../LogeoUsuario/usuarioComunAcceder';
+import UsuarioComunAcceder from '../LogeoUsuario/UsuarioComunAcceder';
 
 
 const Drawer = createDrawerNavigator()
