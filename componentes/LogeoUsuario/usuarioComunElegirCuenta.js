@@ -10,11 +10,11 @@ export default function UsuarioComunElegirCuenta({ navigation }) {
       <View style={styles.form}>
             <Text style={styles.label}>Elige una cuenta</Text>
             <TextInput style={styles.input} placeholder='Ingrese correo electronico' />
-            <TouchableOpacity style={styles.boton} title="ComfirmarMail" onPress={() => navigation.navigate('usuarioInicio')}  >
+            <TouchableOpacity style={styles.boton} title="ComfirmarMail" onPress={() => navigation.navigate('mainPageUsuario')}  >
                 <Text style={styles.textoBoton}>confirmar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.boton} title="Cancelar" onPress={() => navigation.goBack('bienvenida')}  >
-                <Text style={styles.textoBoton}>confirmar</Text>
+            <TouchableOpacity style={styles.boton} title="Cancelar" onPress={() => navigation.navigate('bienvenida')}  >
+                <Text style={styles.textoBoton}>cancelar</Text>
             </TouchableOpacity>
         </View>
     </View>
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     boton: {
         alignItems: 'center',
         backgroundColor: 'white',
-        padding: 25,
-        marginTop: 30,
+        padding: 15,
+        marginTop: 10,
         borderRadius: 10,
         width: 260,
     },

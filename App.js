@@ -5,7 +5,7 @@ import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import Bienvenida from './componentes/bienvenida';
 import UsuarioComunAcceder from './componentes/LogeoUsuario/usuarioComunAcceder';
 import UsuarioComunElegirCuenta from './componentes/LogeoUsuario/usuarioComunElegirCuenta';
-import UsuarioInicio from './componentes/LogeoUsuario/usuarioInicio';
+import UsuarioInicio from './componentes/MainUsuario/mainPageUsuario';
 
 import PreLogin from './componentes/LogeoInmobiliaria/preLogin';
 import RegisterInmobiliaria from './componentes/LogeoInmobiliaria/registerInmobiliaria';
@@ -14,7 +14,9 @@ import RecuperarClave from './componentes/LogeoInmobiliaria/recuperarClave';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainPageInmobiliaria from './componentes/MainInmobiliaria/mainPageInmobiliaria';
+import MainPageUsuario from './componentes/MainUsuario/mainPageUsuario';
 import DrawerNavigation from './componentes/Navigation/drawerNavigation';
+import DrawerNavigationUsuario from './componentes/Navigation/drawerNavigationUsuario';
 
 
 const fondo = require('./assets/fondo.jpeg');
@@ -38,7 +40,7 @@ export default function App() {
 
             <Stack.Screen name="usuarioComunAcceder" component={UsuarioComunAcceder} />
             <Stack.Screen name="usuarioComunElegirCuenta" component={UsuarioComunElegirCuenta} />
-            <Stack.Screen name="usuarioInicio" component={UsuarioInicio} />
+            <Stack.Screen name="mainPageUsuario" component={DrawerNavigationUsuario} />
             
             <Stack.Screen name="registrarInmobiliaria" component={RegisterInmobiliaria} />
             <Stack.Screen name="prelogin" component={PreLogin} />
