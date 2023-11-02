@@ -1,23 +1,68 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { contactBackend } from '../../API';
 
-export default function RegisterInmobiliaria({navigation}) {
+
+
+export default function RegisterInmobiliaria({ navigation }) {
+
+    const [nombre, setNombre] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [rePassword, setRePassword] = useState('');
+
+    const registrarInmo = async () => {
+        console.log('entroooo')
+        let data = {
+            "fantasyName": nombre,
+            "contactEmail": email,
+            "password": password
+        };
+        try {
+            if (password == rePassword) {
+                let res = await contactBackend("/real-state-companies", false, "POST", null, data, false, 201)
+                console.log(res)
+                navigation.navigate('logearInmobiliaria')
+
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
     return (
         <View style={styles.container}>
             <Text style={styles.textoh1}>Registrate en nuestra plataforma</Text>
             <Text style={styles.subtitulo}>Inmobiliarias</Text>
             <View style={styles.form}>
                 <Text style={styles.label}>Nombre</Text>
-                <TextInput style={styles.input} placeholder='Nombre de fantasía' />
+                <TextInput
+                    style={styles.input}
+                    placeholder='Nombre de fantasía'
+                    value={nombre}
+                    onChangeText={setNombre} />
                 <Text style={styles.label}>Correo electrónico</Text>
-                <TextInput style={styles.input} placeholder='Correo electrónico' />
+                <TextInput
+                    style={styles.input}
+                    placeholder='Correo electrónico'
+                    value={email}
+                    onChangeText={setEmail} />
                 <Text style={styles.label}>Clave</Text>
-                <TextInput style={styles.input} placeholder='Contraseña' secureTextEntry />
+                <TextInput
+                    style={styles.input}
+                    placeholder='Contraseña'
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword} />
                 <Text style={styles.label}>Reingresá tu clave</Text>
-                <TextInput style={styles.input} placeholder='Volvé a ingresar tu contraseña' secureTextEntry />
+                <TextInput
+                    style={styles.input}
+                    placeholder='Volvé a ingresar tu contraseña'
+                    secureTextEntry
+                    value={rePassword}
+                    onChangeText={setRePassword} />
             </View>
-            <TouchableOpacity style={styles.boton} title="Register" onPress={() => console.log("Boton presionado")} >
+            <TouchableOpacity style={styles.boton} title="Register" onPress={ registrarInmo } >
                 <Text style={styles.textoBoton}>Registrar Inmobiliaria</Text>
             </TouchableOpacity>
         </View>

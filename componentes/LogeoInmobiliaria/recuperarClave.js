@@ -2,14 +2,21 @@ import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 
+
+
 export default function RecuperarClave({navigation}) {
+    const [email, setEmail] = useState(''); 
     return (
         <View style={styles.container}>
             <Text style={styles.textoh1}>Ingresá tu correo para restaurar tu contraseña</Text>
             <Text style={styles.subtitulo}>Inmobiliarias</Text>
             <View style={styles.form}>
                 <Text style={styles.label}>Correo electrónico</Text>
-                <TextInput style={styles.input} placeholder='E-mail' />
+                <TextInput 
+                style={styles.input} 
+                placeholder='E-mail'
+                value={email}
+                onChangeText={setEmail} />
             </View>
             <TouchableOpacity style={styles.boton} title="Register" onPress={() => console.log("Boton presionado")} >
                 <Text style={styles.textoBoton}>Restaurar contraseña</Text>

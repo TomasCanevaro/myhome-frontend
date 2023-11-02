@@ -4,6 +4,8 @@ import PreLogin from "../LogeoInmobiliaria/preLogin";
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import MenuButtonItem from '../Reusables/MenuButtonItem';
 import MainPageInmobiliaria from '../MainInmobiliaria/mainPageInmobiliaria';
+import Card from '../Reusables/card';
+import MisPropiedades from '../MainInmobiliaria/misPropiedades';
 
 const Drawer = createDrawerNavigator()
 
@@ -25,7 +27,7 @@ export default function DrawerNavigation() {
             }}
         >
             <Drawer.Screen name="Inicio" component={MainPageInmobiliaria} />
-            <Drawer.Screen name="Mis propiedades" component={PreLogin} />
+            <Drawer.Screen name="Mis propiedades" component={MisPropiedades} />
             <Drawer.Screen name="Crear propiedad" component={PreLogin} />
             <Drawer.Screen name="Cerrar sesión" component={PreLogin} />
         </Drawer.Navigator>

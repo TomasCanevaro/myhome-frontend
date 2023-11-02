@@ -1,4 +1,4 @@
-const backendURL = "localhost:4000"
+const backendURL = "myhome-backend.vercel.app/api/v1/"
 
 export async function contactBackend(endpoint, accessRequired = false, method = "GET", queryParams = null, body = null, secure = false, expectedResponseCode = 200) {
 

@@ -9,6 +9,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainPageInmobiliaria from './componentes/MainInmobiliaria/mainPageInmobiliaria';
 import DrawerNavigation from './componentes/Navigation/drawerNavigation';
+import Card from './componentes/Reusables/card';
 
 
 
