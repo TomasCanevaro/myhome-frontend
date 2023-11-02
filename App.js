@@ -17,6 +17,8 @@ import MainPageInmobiliaria from './componentes/MainInmobiliaria/mainPageInmobil
 import MainPageUsuario from './componentes/MainUsuario/mainPageUsuario';
 import DrawerNavigation from './componentes/Navigation/drawerNavigation';
 import DrawerNavigationUsuario from './componentes/Navigation/drawerNavigationUsuario';
+import Card from './componentes/Reusables/card';
+
 
 
 const fondo = require('./assets/fondo.jpeg');
