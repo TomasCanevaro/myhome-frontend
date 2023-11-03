@@ -3,11 +3,10 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import Card from '../Reusables/card';
 
-export default function MainPageUsuario({navigation}) { 
+export default function FavoritosUsuario({navigation}) { 
 
     return (
         <View style={styles.container}>
-            <Text style={styles.textoh1}>Propiedades cercanas</Text>
             <View style={styles.container}>
                 <Card>
                     
@@ -18,12 +17,12 @@ export default function MainPageUsuario({navigation}) {
                         />
                     </View>
                     <View style={styles.columna2}>
-                        <Text style={styles.title}>Casa en alquiler</Text>
+                        <Text style={styles.title}>Depto. en alquiler</Text>
                     </View>
                     <View style={styles.columna3}>
-                        <Text style={styles.rawText}>$150.000</Text>
-                        <Text style={styles.rawText}>3 amb.</Text>
-                        <Text style={styles.rawText}>Pilar</Text>
+                        <Text style={styles.rawText}>$100.000</Text>
+                        <Text style={styles.rawText}>1 amb.</Text>
+                        <Text style={styles.rawText}>Tigre</Text>
                         <View style={styles.columna4}>
                             <TouchableOpacity>
                                 <Image

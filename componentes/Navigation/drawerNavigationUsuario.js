@@ -3,6 +3,8 @@ import { DrawerContentScrollView, createDrawerNavigator } from "@react-navigatio
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import MenuButtonItem from '../Reusables/MenuButtonItem';
 import MainPageUsuario from '../MainUsuario/mainPageUsuario';
+import FavoritosUsuario from '../MainUsuario/favoritosUsuario';
+import BuscarPropiedadUsuario from '../MainUsuario/buscarPropiedadUsuario';
 import UsuarioComunAcceder from '../LogeoUsuario/usuarioComunAcceder';
 
 
@@ -26,8 +28,8 @@ export default function DrawerNavigationUsuario() {
             }}
         >
             <Drawer.Screen name="Inicio" component={MainPageUsuario} />
-            <Drawer.Screen name="Buscar propiedad" component={MainPageUsuario} />
-            <Drawer.Screen name="Favoritos" component={MainPageUsuario} />
+            <Drawer.Screen name="Buscar propiedad" component={BuscarPropiedadUsuario} />
+            <Drawer.Screen name="Mis Favoritos" component={FavoritosUsuario} />
             <Drawer.Screen name="Cerrar sesión" component={UsuarioComunAcceder} />
         </Drawer.Navigator>
     )
@@ -52,7 +54,7 @@ const MenuItems = ({ navigation }) => {
             />
             <MenuButtonItem
                 text='Favoritos'
-                onPress={() => navigation.navigate('Favoritos')}
+                onPress={() => navigation.navigate('Mis Favoritos')}
             />
             <MenuButtonItem
                 text='Cerrar sesion'
