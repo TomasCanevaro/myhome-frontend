@@ -5,7 +5,7 @@ import MenuButtonItem from '../Reusables/MenuButtonItem';
 import MainPageUsuario from '../MainUsuario/mainPageUsuario';
 import FavoritosUsuario from '../MainUsuario/favoritosUsuario';
 import BuscarPropiedadUsuario from '../MainUsuario/buscarPropiedadUsuario';
-import UsuarioComunAcceder from '../LogeoUsuario/usuarioComunAcceder';
+import UsuarioComunAcceder from '../LogeoUsuario/UsuarioComunAcceder';
 
 
 const Drawer = createDrawerNavigator()

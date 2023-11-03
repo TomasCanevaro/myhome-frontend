@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 
 import Bienvenida from './componentes/bienvenida';
-import UsuarioComunAcceder from './componentes/LogeoUsuario/usuarioComunAcceder';
+import UsuarioComunAcceder from './componentes/LogeoUsuario/UsuarioComunAcceder';
 import UsuarioComunElegirCuenta from './componentes/LogeoUsuario/usuarioComunElegirCuenta';
 import UsuarioInicio from './componentes/MainUsuario/mainPageUsuario';
 
