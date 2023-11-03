@@ -7,7 +7,36 @@ export default function MisPropiedades() {
     return (
         <View style={styles.container}>
             <Card>
-                
+                <View style={styles.columna}>
+                    <Image
+                        style={styles.icono}
+                        source={require('../../assets/casa.png')}
+                    />
+                </View>
+                <View style={styles.columna2}>
+                    <Text style={styles.title}>Casa en alquiler</Text>
+                </View>
+                <View style={styles.columna3}>
+                    <Text style={styles.rawText}>$150.000</Text>
+                    <Text style={styles.rawText}>3 amb.</Text>
+                    <Text style={styles.rawText}>Pilar</Text>
+                    <View style={styles.columna4}>
+                        <TouchableOpacity>
+                            <Image
+                                style={styles.clickableIcon}
+                                source={require('../../assets/edit.png')}
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Image
+                                style={styles.clickableIcon}
+                                source={require('../../assets/delete.png')}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Card>
+            <Card>
                 <View style={styles.columna}>
                     <Image
                         style={styles.icono}
@@ -38,6 +67,7 @@ export default function MisPropiedades() {
                 </View>
             </Card>
         </View>
+        
     );
 }
 

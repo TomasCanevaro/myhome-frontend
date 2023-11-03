@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
-
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
+import { contactBackend } from '../../API';
 
 export default function LoginInmobiliaria({navigation}) {
     const [email, setEmail] = useState(''); 
@@ -12,6 +12,11 @@ export default function LoginInmobiliaria({navigation}) {
     useEffect(() => { 
         validateForm(); 
     }, [email, password]); 
+
+    const Alerta = () =>
+    Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ]);
 
     const validateForm = () => { 
         let errors = {}; 
@@ -30,13 +35,26 @@ export default function LoginInmobiliaria({navigation}) {
         setIsFormValid(Object.keys(errors).length === 0); 
     }; 
 
-    const handleSubmit = () => { 
-        if (isFormValid) { 
-            console.log('Form submitted successfully!'); 
-        } else { 
-            console.log('Form has errors. Please correct them.'); 
-        } 
-    }; 
+    const logearInmo = async () => {
+        let data = {
+            "email": email,
+            "password": password
+        };
+        try {
+            if (isFormValid) {
+                let res = await contactBackend("/auths", false, "POST", null, data, false, 200)
+                console.log(res)
+                console.log("aaa")
+                navigation.navigate('mainPageInmobiliaria')
+
+            }else{
+                alert("Hubo un error al acceder, reingrese los datos nuevamente")
+            }
+        } catch (e) {
+            console.log(e)
+            Alerta()
+        }
+    }
 
     return (
         <View style={styles.container}>
