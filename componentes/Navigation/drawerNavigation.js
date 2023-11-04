@@ -6,6 +6,8 @@ import MenuButtonItem from '../Reusables/MenuButtonItem';
 import MainPageInmobiliaria from '../MainInmobiliaria/mainPageInmobiliaria';
 import Card from '../Reusables/card';
 import MisPropiedades from '../MainInmobiliaria/misPropiedades';
+import CrearPropiedad from '../CrearPropiedad/crearPropiedad';
+import CrearPropiedad2 from '../CrearPropiedad/crearPropiedad2';
 
 const Drawer = createDrawerNavigator()
 
@@ -28,7 +30,8 @@ export default function DrawerNavigation() {
         >
             <Drawer.Screen name="Inicio" component={MainPageInmobiliaria} />
             <Drawer.Screen name="Mis propiedades" component={MisPropiedades} />
-            <Drawer.Screen name="Crear propiedad" component={PreLogin} />
+            <Drawer.Screen name="Crear propiedad: Paso 1" component={CrearPropiedad} />
+            <Drawer.Screen name="Crear propiedad: Paso 2" component={CrearPropiedad2} />
             <Drawer.Screen name="Cerrar sesión" component={PreLogin} />
         </Drawer.Navigator>
     )
@@ -58,7 +61,7 @@ const MenuItems = ({ navigation }) => {
             />
             <MenuButtonItem
                 text='Crear propiedad'
-                onPress={() => navigation.navigate('Crear propiedad')}
+                onPress={() => navigation.navigate('Crear propiedad: Paso 1')}
             />
             <MenuButtonItem
                 text='Cerrar sesion'

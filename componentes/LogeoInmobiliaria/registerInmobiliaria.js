@@ -13,7 +13,6 @@ export default function RegisterInmobiliaria({ navigation }) {
     const [rePassword, setRePassword] = useState('');
 
     const registrarInmo = async () => {
-        console.log('entroooo')
         let data = {
             "fantasyName": nombre,
             "contactEmail": email,
@@ -25,6 +24,8 @@ export default function RegisterInmobiliaria({ navigation }) {
                 console.log(res)
                 navigation.navigate('logearInmobiliaria')
 
+            }else{
+                alert("Las contraseñas no coinciden, por favor reingréselas correctamente")
             }
         } catch (e) {
             console.log(e)
