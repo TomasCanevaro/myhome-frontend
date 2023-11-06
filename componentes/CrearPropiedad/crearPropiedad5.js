@@ -38,9 +38,8 @@ export default function CrearPropiedad5({ navigation }) {
             save('precio', precio)
             save('cambio', cambio)
             save('expensas', expensas)
-            navigation.navigate('Crear propiedad: Paso 4')
             try {
-                let res = await contactBackend("/real-state-companies", false, "POST", null, data, false, 201)
+                let res = await contactBackend("/properties", false, "POST", null, data, false, 201)
                 console.log(res)
                 navigation.navigate('logearInmobiliaria')
                 
