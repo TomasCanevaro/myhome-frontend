@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
-import DropdownComponent from '../Reusables/dropDown';
+
 
 
 export default function CrearPropiedad5({ navigation }) {
@@ -146,7 +146,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
-
         elevation: 2,
     },
     inputPrecio: {
@@ -162,7 +161,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
-
         elevation: 2,
     },
     rawText: {
