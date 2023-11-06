@@ -7,3 +7,9 @@ Tener instalado Node en la computadora, y luego instalar todas las dependencias 
 En caso de salir un error que se refiere al "main" correr con el siguiente comando:
 
 npm start -- --reset-cache
+
+<h1>Correr app</h1>
+
+En el directorio -> npx expo start
+
+Escanear el codigo con la app Expo Go (solo la primera vez, despues ya esta en la app)
