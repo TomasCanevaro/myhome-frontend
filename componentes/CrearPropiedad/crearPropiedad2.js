@@ -22,7 +22,8 @@ export default function CrearPropiedad2({navigation}) {
                     <TextInput
                         style={styles.input}
                         value={calle}
-                        onChangeText={setCalle} />
+                        onChangeText={setCalle}
+                        required />
                 </View>
                 <View style={styles.fila}>
                     <Text style={styles.rawText}>Número</Text>
@@ -30,7 +31,8 @@ export default function CrearPropiedad2({navigation}) {
                         style={styles.input}
                         value={numero}
                         onChangeText={setNumero}
-                        inputMode='numeric' />
+                        inputMode='numeric'
+                        required />
                 </View>
                 <View style={styles.fila}>
                     <Text style={styles.rawText}>Piso</Text>
@@ -52,28 +54,32 @@ export default function CrearPropiedad2({navigation}) {
                     <TextInput
                         style={styles.input}
                         value={localidad}
-                        onChangeText={setLocalidad} />
+                        onChangeText={setLocalidad}
+                        required />
                 </View>
                 <View style={styles.fila}>
                     <Text style={styles.rawText}>Ciudad</Text>
                     <TextInput
                         style={styles.input}
                         value={ciudad}
-                        onChangeText={setCiudad} />
+                        onChangeText={setCiudad}
+                        required />
                 </View>
                 <View style={styles.fila}>
                     <Text style={styles.rawText}>Provincia</Text>
                     <TextInput
                         style={styles.input}
                         value={provincia}
-                        onChangeText={setProvincia} />
+                        onChangeText={setProvincia}
+                        required />
                 </View>
                 <View style={styles.fila}>
                     <Text style={styles.rawText}>País</Text>
                     <TextInput
                         style={styles.input}
                         value={pais}
-                        onChangeText={setPais} />
+                        onChangeText={setPais}
+                        required />
                 </View>
             </View>
 
