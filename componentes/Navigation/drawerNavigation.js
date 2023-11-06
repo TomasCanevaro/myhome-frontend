@@ -8,6 +8,9 @@ import Card from '../Reusables/card';
 import MisPropiedades from '../MainInmobiliaria/misPropiedades';
 import CrearPropiedad from '../CrearPropiedad/crearPropiedad';
 import CrearPropiedad2 from '../CrearPropiedad/crearPropiedad2';
+import CrearPropiedad3 from '../CrearPropiedad/crearPropiedad3';
+import CrearPropiedad4 from '../CrearPropiedad/crearPropiedad4';
+import CrearPropiedad5 from '../CrearPropiedad/crearPropiedad5';
 
 const Drawer = createDrawerNavigator()
 
@@ -32,6 +35,9 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="Mis propiedades" component={MisPropiedades} />
             <Drawer.Screen name="Crear propiedad: Paso 1" component={CrearPropiedad} />
             <Drawer.Screen name="Crear propiedad: Paso 2" component={CrearPropiedad2} />
+            <Drawer.Screen name="Crear propiedad: Paso 3" component={CrearPropiedad3} />
+            <Drawer.Screen name="Crear propiedad: Paso 4" component={CrearPropiedad4} />
+            <Drawer.Screen name="Crear propiedad: Paso 5" component={CrearPropiedad5} />
             <Drawer.Screen name="Cerrar sesión" component={PreLogin} />
         </Drawer.Navigator>
     )

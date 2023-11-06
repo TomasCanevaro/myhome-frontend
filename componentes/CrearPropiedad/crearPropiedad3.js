@@ -2,86 +2,78 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
 
-export default function CrearPropiedad2({navigation}) {
+export default function CrearPropiedad3({navigation}) {
 
-    const [calle, setCalle] = useState('');
-    const [numero, setNumero] = useState('');
-    const [piso, setPiso] = useState('');
-    const [departamento, setDepartamento] = useState('');
-    const [localidad, setLocalidad] = useState('');
-    const [ciudad, setCiudad] = useState('');
-    const [provincia, setProvincia] = useState('');
-    const [pais, setPais] = useState('');
+    const [m2cub, setM2cub] = useState('');
+    const [m2semi, setM2semi] = useState('');
+    const [m2desc, setM2desc] = useState('');
+    const [ambientes, setAmbientes] = useState('');
+    const [habitaciones, setHabitaciones] = useState('');
+    const [banos, setBanos] = useState('');
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Complete la dirección</Text>
+            <Text style={styles.title}>Dimensiones</Text>
             <View style={styles.form}>
                 <View style={styles.fila}>
-                    <Text style={styles.rawText}>Calle</Text>
+                    <Text style={styles.rawText}>m2 cubiertos </Text>
                     <TextInput
                         style={styles.input}
-                        value={calle}
-                        onChangeText={setCalle} />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Número</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={numero}
-                        onChangeText={setNumero}
+                        value={m2cub}
+                        onChangeText={setM2cub}
                         inputMode='numeric' />
                 </View>
                 <View style={styles.fila}>
-                    <Text style={styles.rawText}>Piso</Text>
+                    <Text style={styles.rawText}>m2 semi-cubiertos</Text>
                     <TextInput
                         style={styles.input}
-                        value={piso}
-                        onChangeText={setPiso}
+                        value={m2semi}
+                        onChangeText={setM2semi}
                         inputMode='numeric' />
                 </View>
                 <View style={styles.fila}>
-                    <Text style={styles.rawText}>Departamento</Text>
+                    <Text style={styles.rawText}>m2 descubiertos</Text>
                     <TextInput
                         style={styles.input}
-                        value={departamento}
-                        onChangeText={setDepartamento} />
+                        value={m2desc}
+                        onChangeText={setM2desc}
+                        inputMode='numeric' />
+                </View>
+            </View>
+
+            <Text style={styles.title}>Datos de la propiedad</Text>
+            <View style={styles.form}>
+                <View style={styles.fila}>
+                    <Text style={styles.rawText}>Ambientes</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={ambientes}
+                        onChangeText={setAmbientes}
+                        inputMode='numeric' />
                 </View>
                 <View style={styles.fila}>
-                    <Text style={styles.rawText}>Localidad</Text>
+                    <Text style={styles.rawText}>Habitaciones</Text>
                     <TextInput
                         style={styles.input}
-                        value={localidad}
-                        onChangeText={setLocalidad} />
+                        value={habitaciones}
+                        onChangeText={setHabitaciones}
+                        inputMode='numeric' />
                 </View>
                 <View style={styles.fila}>
-                    <Text style={styles.rawText}>Ciudad</Text>
+                    <Text style={styles.rawText}>Baños</Text>
                     <TextInput
                         style={styles.input}
-                        value={ciudad}
-                        onChangeText={setCiudad} />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Provincia</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={provincia}
-                        onChangeText={setProvincia} />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>País</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={pais}
-                        onChangeText={setPais} />
+                        value={banos}
+                        onChangeText={setBanos}
+                        inputMode='numeric' />
                 </View>
             </View>
 
         <View style={styles.fila}>
-            <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 1')} >
+            <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 2')} >
                 <Text style={styles.textoBoton}>Volver</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 3')} >
+            <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 4')} >
                 <Text style={styles.textoBoton}>Siguiente</Text>
             </TouchableOpacity>
         </View>
@@ -113,10 +105,11 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         marginBottom: 20,
+        marginTop: 20
     },
     input: {
         height: 35,
-        width: 200,
+        width: 150,
         backgroundColor: 'rgba(256, 256, 256, 0.6)',
         marginBottom: 15,
         padding: 10,
@@ -133,7 +126,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
         padding: 10,
         borderRadius: 10,
-        alignItems: 'flex-end'
+        alignItems: 'flex-end',
+
     },
     boton: {
         alignItems: 'center',
