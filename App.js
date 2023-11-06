@@ -1,6 +1,12 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+
+import Bienvenida from './componentes/bienvenida';
+import UsuarioComunAcceder from './componentes/LogeoUsuario/UsuarioComunAcceder';
+import UsuarioComunElegirCuenta from './componentes/LogeoUsuario/usuarioComunElegirCuenta';
+import UsuarioInicio from './componentes/MainUsuario/mainPageUsuario';
+
 import PreLogin from './componentes/LogeoInmobiliaria/preLogin';
 import RegisterInmobiliaria from './componentes/LogeoInmobiliaria/registerInmobiliaria';
 import LoginInmobiliaria from './componentes/LogeoInmobiliaria/loginInmobiliaria';
@@ -8,7 +14,9 @@ import RecuperarClave from './componentes/LogeoInmobiliaria/recuperarClave';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainPageInmobiliaria from './componentes/MainInmobiliaria/mainPageInmobiliaria';
+import MainPageUsuario from './componentes/MainUsuario/mainPageUsuario';
 import DrawerNavigation from './componentes/Navigation/drawerNavigation';
+import DrawerNavigationUsuario from './componentes/Navigation/drawerNavigationUsuario';
 import Card from './componentes/Reusables/card';
 
 
@@ -29,9 +37,15 @@ export default function App() {
     <ImageBackground source={fondo} resizeMode='cover' style={styles.estiloFondo}>
       <NavigationContainer theme={MyTheme}>
         <View style={styles.container}>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="prelogin" component={PreLogin} />
+          <Stack.Navigator initialRouteName="bienvenida" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="bienvenida" component={Bienvenida} />
+
+            <Stack.Screen name="usuarioComunAcceder" component={UsuarioComunAcceder} />
+            <Stack.Screen name="usuarioComunElegirCuenta" component={UsuarioComunElegirCuenta} />
+            <Stack.Screen name="mainPageUsuario" component={DrawerNavigationUsuario} />
+            
             <Stack.Screen name="registrarInmobiliaria" component={RegisterInmobiliaria} />
+            <Stack.Screen name="prelogin" component={PreLogin} />
             <Stack.Screen name="logearInmobiliaria" component={LoginInmobiliaria} />
             <Stack.Screen name="recuperarClave" component={RecuperarClave} />
             <Stack.Screen name="mainPageInmobiliaria" component={DrawerNavigation} />
