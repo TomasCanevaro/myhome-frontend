@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { contactBackend } from '../../API';
+import * as SecureStore from 'expo-secure-store';
+
 
 export default function LoginInmobiliaria({navigation}) {
     const [email, setEmail] = useState(''); 
@@ -9,14 +11,32 @@ export default function LoginInmobiliaria({navigation}) {
     const [errors, setErrors] = useState({}); 
     const [isFormValid, setIsFormValid] = useState(false); 
 
+    const [key, onChangeKey] = useState('');
+    const [value, onChangeValue] = useState('');
+    const [result, onChangeResult] = useState('(result)');
+
+    async function save(key,value){
+        await SecureStore.setItemAsync(key, value);
+
+    }
+
+    async function getValueFor(key){
+        let result = await SecureStore.getItemAsync(key);
+        if (result){
+            onChangeResult(result)
+        }else{
+            alert('Llave invalida')
+        }
+    }
+
     useEffect(() => { 
         validateForm(); 
     }, [email, password]); 
 
     const Alerta = () =>
     Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
-      {text: 'OK', onPress: () => console.log('OK Pressed')},
-    ]);
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
 
     const validateForm = () => { 
         let errors = {}; 
@@ -44,11 +64,14 @@ export default function LoginInmobiliaria({navigation}) {
             if (isFormValid) {
                 let res = await contactBackend("/auths", false, "POST", null, data, false, 200)
                 console.log(res)
-                console.log("aaa")
+                save('userToken',res.bearerToken)
+                save('fantasyName',res.user.fantasyName)
                 navigation.navigate('mainPageInmobiliaria')
 
             }else{
-                alert("Hubo un error al acceder, reingrese los datos nuevamente")
+                Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
+                    {text: 'OK', onPress: () => console.log('OK Pressed')},
+                  ]);
             }
         } catch (e) {
             console.log(e)
@@ -75,7 +98,7 @@ export default function LoginInmobiliaria({navigation}) {
                 onChangeText={setPassword}
                  />
             </View>
-            <TouchableOpacity style={styles.boton} title="Login" onPress={() => navigation.navigate('mainPageInmobiliaria')}  >
+            <TouchableOpacity style={styles.boton} title="Login" onPress={logearInmo}  >
                 <Text style={styles.textoBoton}>Iniciar sesión</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.botonChico} title="olvideClave" onPress={() => navigation.navigate('recuperarClave')} >

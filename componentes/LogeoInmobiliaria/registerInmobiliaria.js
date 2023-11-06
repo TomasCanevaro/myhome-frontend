@@ -15,8 +15,10 @@ export default function RegisterInmobiliaria({ navigation }) {
     const registrarInmo = async () => {
         let data = {
             "fantasyName": nombre,
+            "email": email,
             "contactEmail": email,
-            "password": password
+            "password": password,
+            "role": 'business'
         };
         try {
             if (password == rePassword) {

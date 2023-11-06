@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { DrawerContentScrollView, createDrawerNavigator } from "@react-navigation/drawer";
 import PreLogin from "../LogeoInmobiliaria/preLogin";
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
@@ -11,10 +11,13 @@ import CrearPropiedad2 from '../CrearPropiedad/crearPropiedad2';
 import CrearPropiedad3 from '../CrearPropiedad/crearPropiedad3';
 import CrearPropiedad4 from '../CrearPropiedad/crearPropiedad4';
 import CrearPropiedad5 from '../CrearPropiedad/crearPropiedad5';
+import * as SecureStore from 'expo-secure-store';
 
 const Drawer = createDrawerNavigator()
 
 export default function DrawerNavigation() {
+    
+
     return (
 
         <Drawer.Navigator
@@ -44,8 +47,24 @@ export default function DrawerNavigation() {
 }
 
 const MenuItems = ({ navigation }) => {
+    const [fantasyName, setFantasyName] = useState(''); 
+
+    async function getData() {
+        const userTokenKey = 'userToken'
+        const fantasyNameKey = 'fantasyName'
+        const storedFantasyName = await SecureStore.getItemAsync(fantasyNameKey)
+        if (storedFantasyName){
+            setFantasyName(storedFantasyName)
+        }
+    }
+    useEffect(
+        React.useCallback(() => {
+          getData();
+        }, [])
+      );
 
     return (
+        
         <DrawerContentScrollView
             style={styles.container}
         >
@@ -53,7 +72,7 @@ const MenuItems = ({ navigation }) => {
                 style={styles.icono}
                 source={require('../../assets/iconInmobiliaria.png')}
             />
-            <Text style={styles.title}>Remax 01</Text>
+            <Text style={styles.title}>{fantasyName}</Text>
             <Text style={styles.subtitle}>Inmobiliaria</Text>
             <View style={styles.linea} />
 
