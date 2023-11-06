@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
-
+import * as SecureStore from 'expo-secure-store';
 
 
 export default function CrearPropiedad5({ navigation }) {
@@ -21,7 +21,35 @@ export default function CrearPropiedad5({ navigation }) {
         { label: 'Pesos', value: 'pesos' },
         { label: 'Dólares', value: 'dolares' },
     ];
-    
+
+    async function save(key, value) {
+        await SecureStore.setItemAsync(key, value);
+    }
+
+    const handleSubmit = async () => {
+        if (descripcion === '' || estado === '' || precio === '' || cambio === '' || expensas === '') {
+            Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        }
+        else {
+            save('descripcion', descripcion)
+            save('estado', estado)
+            save('precio', precio)
+            save('cambio', cambio)
+            save('expensas', expensas)
+            navigation.navigate('Crear propiedad: Paso 4')
+            try {
+                let res = await contactBackend("/real-state-companies", false, "POST", null, data, false, 201)
+                console.log(res)
+                navigation.navigate('logearInmobiliaria')
+                
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+
 
     return (
         <View style={styles.container}>
@@ -70,7 +98,7 @@ export default function CrearPropiedad5({ navigation }) {
                         onChange={item => {
                             setCambio(item.value);
                         }}
-                    />   
+                    />
                 </View>
                 <Text style={styles.checkText}>Expensas</Text>
                 <View style={styles.fila}>
@@ -93,7 +121,7 @@ export default function CrearPropiedad5({ navigation }) {
                         onChange={item => {
                             setCambio(item.value);
                         }}
-                    />   
+                    />
                 </View>
             </View>
 
@@ -101,8 +129,8 @@ export default function CrearPropiedad5({ navigation }) {
                 <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 4')} >
                     <Text style={styles.textoBoton}>Volver</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => console.log('asd')} >
-                    <Text style={styles.textoBoton}>Siguiente</Text>
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
+                    <Text style={styles.textoBoton}>Crear propiedad</Text>
                 </TouchableOpacity>
             </View>
 

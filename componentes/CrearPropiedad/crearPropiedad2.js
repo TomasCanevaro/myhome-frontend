@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert} from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 
 export default function CrearPropiedad2({navigation}) {
 
@@ -12,6 +13,37 @@ export default function CrearPropiedad2({navigation}) {
     const [ciudad, setCiudad] = useState('');
     const [provincia, setProvincia] = useState('');
     const [pais, setPais] = useState('');
+
+    async function save(key,value){
+        await SecureStore.setItemAsync(key, value);
+    }
+
+    const handleSubmit = async () => {
+        if(calle==='' || numero === '' || localidad === '' || ciudad === ''|| provincia === ''|| pais === '' ){
+            Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+              ]);
+        }
+        else{
+            save('calle',calle)
+            save('numero',numero)
+            save('piso',piso)
+            save('departamento',departamento)
+            save('localidad',localidad)
+            save('ciudad',ciudad)
+            save('provincia',provincia)
+            save('pais',pais)
+
+            if(piso==='' && departamento===''){
+                save('tipoPropiedad','casa')
+            }else{
+                save('tipoPropiedad','departamento')
+            }
+            navigation.navigate('Crear propiedad: Paso 3')
+    }
+    
+}
+
 
     return (
         <View style={styles.container}>
@@ -87,7 +119,7 @@ export default function CrearPropiedad2({navigation}) {
             <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 1')} >
                 <Text style={styles.textoBoton}>Volver</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 3')} >
+            <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
                 <Text style={styles.textoBoton}>Siguiente</Text>
             </TouchableOpacity>
         </View>

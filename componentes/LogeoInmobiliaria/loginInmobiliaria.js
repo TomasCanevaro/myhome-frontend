@@ -17,17 +17,8 @@ export default function LoginInmobiliaria({navigation}) {
 
     async function save(key,value){
         await SecureStore.setItemAsync(key, value);
-
     }
 
-    async function getValueFor(key){
-        let result = await SecureStore.getItemAsync(key);
-        if (result){
-            onChangeResult(result)
-        }else{
-            alert('Llave invalida')
-        }
-    }
 
     useEffect(() => { 
         validateForm(); 

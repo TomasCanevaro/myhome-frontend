@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 
 export default function CrearPropiedad3({navigation}) {
 
@@ -10,6 +11,27 @@ export default function CrearPropiedad3({navigation}) {
     const [ambientes, setAmbientes] = useState('');
     const [habitaciones, setHabitaciones] = useState('');
     const [banos, setBanos] = useState('');
+
+    async function save(key,value){
+        await SecureStore.setItemAsync(key, value);
+    }
+
+    const handleSubmit = async () => {
+        if(m2cub==='' || m2semi === '' || m2desc === '' || ambientes === ''|| habitaciones === ''|| banos === '' ){
+            Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+              ]);
+        }
+        else{
+            save('m2cub',m2cub)
+            save('m2semi',m2semi)
+            save('m2desc',m2desc)
+            save('ambientes',ambientes)
+            save('habitaciones',habitaciones)
+            save('banos',banos)
+            navigation.navigate('Crear propiedad: Paso 4')
+    }
+}
 
     return (
         <View style={styles.container}>
@@ -73,7 +95,7 @@ export default function CrearPropiedad3({navigation}) {
             <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 2')} >
                 <Text style={styles.textoBoton}>Volver</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 4')} >
+            <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
                 <Text style={styles.textoBoton}>Siguiente</Text>
             </TouchableOpacity>
         </View>

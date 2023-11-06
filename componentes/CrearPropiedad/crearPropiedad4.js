@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
+import * as SecureStore from 'expo-secure-store';
 
 
 
 export default function CrearPropiedad4({ navigation }) {
 
-    const [checkTerraza, setCheckTerraza] = useState('');
-    const [checkBalcon, setCheckBalcon] = useState('');
-    const [checkGarage, setCheckGarage] = useState('');
-    const [checkBaulera, setCheckBaulera] = useState('');
+    const [checkTerraza, setCheckTerraza] = useState(false);
+    const [checkBalcon, setCheckBalcon] = useState(false);
+    const [checkGarage, setCheckGarage] = useState(false);
+    const [checkBaulera, setCheckBaulera] = useState(false);
     const [ubicacion, setUbicacion] = useState('');
     const [orientacion, setOrientacion] = useState('');
     const [amenities, setAmenities] = useState('');
@@ -33,6 +34,43 @@ export default function CrearPropiedad4({ navigation }) {
         { label: 'SUM', value: 'sum' },
         { label: 'Sala de juegos', value: 'juegos' },
     ];
+    async function save(key,value){
+        await SecureStore.setItemAsync(key, value);
+    }
+
+    const handleSubmit = async () => {
+        if(ubicacion==='' || orientacion === '' ){
+            Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+              ]);
+        }
+        else{
+            if(checkTerraza){
+                save('terraza','true')
+            }else{
+                save('terraza','false')
+            }
+            if(checkBalcon){
+                save('balcon','true')
+            }else{
+                save('balcon','false')
+            }
+            if(checkGarage){
+                save('garage','true')
+            }else{
+                save('garage','false')
+            }
+            if(checkBaulera){
+                save('baulera','true')
+            }else{
+                save('baulera','false')
+            }
+            save('ubicacion',ubicacion)
+            save('orientacion',orientacion)
+            save('amenities',amenities)
+            navigation.navigate('Crear propiedad: Paso 5')
+    }
+}
 
     return (
         <View style={styles.container}>
@@ -120,7 +158,7 @@ export default function CrearPropiedad4({ navigation }) {
                 <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 3')} >
                     <Text style={styles.textoBoton}>Volver</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 5')} >
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
                     <Text style={styles.textoBoton}>Siguiente</Text>
                 </TouchableOpacity>
             </View>
