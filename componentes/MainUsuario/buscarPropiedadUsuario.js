@@ -15,6 +15,11 @@ export default function BuscarPropiedadUsuario({navigation}) {
     const [tipoCambio, setTipoCambio] = useState('');
     const [desde, setDesde] = useState('');
     const [hasta, setHasta] = useState('');
+    const [ambientes, setAmbientes] = useState('');
+    const [dormitorios, setDormitorios] = useState('');
+    const [baños, setBaños] = useState('');
+    const [antiguedad, setAntiguedad] = useState('');
+    const [amenities, setAmenities] = useState('');
 
     return (
         <View style={styles.container}>
@@ -107,18 +112,116 @@ export default function BuscarPropiedadUsuario({navigation}) {
                     </RadioButton.Group>
                 </View>
                 <View style={styles.fila}>
-                    <Text style={styles.rawText}>Desde</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={desde}
-                        onChangeText={setDesde} />
+                    <Dropdown
+                        dropdownStyle={styles.input}
+                        labelStyle={styles.rawText}
+                        label="Desde"
+                        placeholder="Elegir"
+                        options={[
+                            { label: '50.000', value: '50.000' },
+                            { label: '60.000', value: '60.000' },
+                            { label: '70.000', value: '70.000' }
+                        ]}
+                        selectedValue={desde}
+                        onValueChange={(value) => setDesde(value)}
+                        primaryColor={'green'}
+                    />
                 </View>
                 <View style={styles.fila}>
-                    <Text style={styles.rawText}>Hasta</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={hasta}
-                        onChangeText={setHasta} />
+                    <Dropdown
+                        dropdownStyle={styles.input}
+                        labelStyle={styles.rawText}
+                        label="Hasta"
+                        placeholder="Elegir"
+                        options={[
+                            { label: '100.000', value: '100.000' },
+                            { label: '120.000', value: '120.000' },
+                            { label: '150.000', value: '150.000' }
+                        ]}
+                        selectedValue={hasta}
+                        onValueChange={(value) => setHasta(value)}
+                        primaryColor={'green'}
+                    />
+                </View>
+                <View style={styles.fila}>
+                    <Dropdown
+                        dropdownStyle={styles.input}
+                        labelStyle={styles.rawText}
+                        label="Ambientes"
+                        placeholder="Elegir"
+                        options={[
+                            { label: '1', value: '1' },
+                            { label: '2', value: '2' },
+                            { label: '3', value: '3' }
+                        ]}
+                        selectedValue={ambientes}
+                        onValueChange={(value) => setAmbientes(value)}
+                        primaryColor={'green'}
+                    />
+                </View>
+                <View style={styles.fila}>
+                    <Dropdown
+                        dropdownStyle={styles.input}
+                        labelStyle={styles.rawText}
+                        label="Dormitorios"
+                        placeholder="Elegir"
+                        options={[
+                            { label: '0', value: '0' },
+                            { label: '1', value: '1' },
+                            { label: '2', value: '2' },
+                            { label: '3', value: '3' }
+                        ]}
+                        selectedValue={dormitorios}
+                        onValueChange={(value) => setDormitorios(value)}
+                        primaryColor={'green'}
+                    />
+                </View>
+                <View style={styles.fila}>
+                    <Dropdown
+                        dropdownStyle={styles.input}
+                        labelStyle={styles.rawText}
+                        label="Baños"
+                        placeholder="Elegir"
+                        options={[
+                            { label: '1', value: '1' },
+                            { label: '2', value: '2' }
+                        ]}
+                        selectedValue={baños}
+                        onValueChange={(value) => setBaños(value)}
+                        primaryColor={'green'}
+                    />
+                </View>
+                <View style={styles.fila}>
+                    <Dropdown
+                        dropdownStyle={styles.input}
+                        labelStyle={styles.rawText}
+                        label="Antiguedad"
+                        placeholder="Elegir"
+                        options={[
+                            { label: 'menos de 10 años', value: '< 10' },
+                            { label: 'entre 10 y 30 años', value: '10 a 30' },
+                            { label: 'mayor a 30 años', value: '> 30' }
+                        ]}
+                        selectedValue={antiguedad}
+                        onValueChange={(value) => setAntiguedad(value)}
+                        primaryColor={'green'}
+                    />
+                </View>
+                <View style={styles.fila}>
+                    <Dropdown
+                        dropdownStyle={styles.input}
+                        labelStyle={styles.rawText}
+                        label="Amenities"
+                        placeholder="Elegir"
+                        options={[
+                            { label: 'quincho', value: 'quincho' },
+                            { label: 'pileta', value: 'pileta' },
+                            { label: 'jacuzzi', value: 'jacuzzi' }
+                        ]}
+                        selectedValue={amenities}
+                        onValueChange={(value) => setAmenities(value)}
+                        primaryColor={'green'}
+                    />
                 </View>
             </View>
 
