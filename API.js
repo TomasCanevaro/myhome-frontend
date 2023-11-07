@@ -3,34 +3,40 @@ const backendURL = "myhome-backend.vercel.app/api/v1/"
 export async function contactBackend(endpoint, accessRequired = false, method = "GET", queryParams = null, body = null, secure = false, expectedResponseCode = 200) {
 
     try {
-
         let urlString = (secure ? "https://" : "http://") +
-            (backendURL) +
-            (endpoint) +
-            (queryParams ? "?" + new URLSearchParams(queryParams) : "")
+            backendURL +
+            endpoint +
+            (queryParams ? "?" + new URLSearchParams(queryParams).toString() : "")
 
         let optionsObj = {
-            method: method
+            method: method,
+            headers: {}
         }
 
         if (accessRequired) {
-            optionsObj["headers"] = {};
-            optionsObj.headers["x-access-token"] = localStorage.getItem('token')
-        };
+            const token = localStorage.getItem('token');
+            if (token) {
+                optionsObj.headers["Authorization"] = `Bearer ${token}`;
+            } else {
+                throw new Error('Access token is required but was not found.');
+            }
+        }
 
         if (body) {
-            {
-                optionsObj["headers"] = {};
-                optionsObj["body"] = JSON.stringify(body);
-                optionsObj.headers["Content-Type"] = "application/json";
+            if (!optionsObj.headers) {
+                optionsObj.headers = {};
             }
-        };
+            optionsObj.body = JSON.stringify(body);
+            optionsObj.headers["Content-Type"] = "application/json";
+        }
 
-        console.log(optionsObj)
+        console.log(optionsObj);
 
         let requestResponse = await fetch(urlString, optionsObj);
 
-        if (requestResponse.status != expectedResponseCode) throw Error("Respuesta de backend no esperada");
+        if (requestResponse.status !== expectedResponseCode) {
+            throw new Error("Respuesta de backend no esperada");
+        }
 
         requestResponse = await requestResponse.json();
 
@@ -39,8 +45,7 @@ export async function contactBackend(endpoint, accessRequired = false, method = 
     } catch (e) {
 
         console.log(e);
-        throw Error("Solicitud fallida")
+        throw new Error("Solicitud fallida")
 
     }
-
 }
