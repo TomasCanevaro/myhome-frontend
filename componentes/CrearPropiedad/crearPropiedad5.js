@@ -4,9 +4,10 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'reac
 import Checkbox from 'expo-checkbox';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import * as SecureStore from 'expo-secure-store';
+import { contactBackend } from '../../API';
 
 
-export default function CrearPropiedad5({ navigation }) {
+export default function CrearPropiedad5({ route, navigation }) {
 
     const [descripcion, setDescripcion] = useState('');
     const [estado, setEstado] = useState('');
@@ -14,8 +15,8 @@ export default function CrearPropiedad5({ navigation }) {
     const [cambio, setCambio] = useState('');
     const [expensas, setExpensas] = useState('');
     const dataEstado = [
-        { label: 'En alquiler', value: 'alquiler' },
-        { label: 'En venta', value: 'venta' },
+        { label: 'En alquiler', value: 'en alquiler' },
+        { label: 'En venta', value: 'en venta' },
     ];
     const dataCambio = [
         { label: 'Pesos', value: 'pesos' },
@@ -26,6 +27,33 @@ export default function CrearPropiedad5({ navigation }) {
         await SecureStore.setItemAsync(key, value);
     }
 
+    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais,
+        m2cub, m2semi, m2desc, ambientes, habitaciones, banos,
+        terraza, balcon, garage, baulera, ubicacion, orientacion, amenities } = route.params;
+
+    const [token, setToken] = useState('');
+    const [email, setEmail] = useState('')
+
+    async function getData() {
+        const userTokenKey = 'userToken'
+        const userEmailKey = 'userMail'
+        const storedTokenKey = await SecureStore.getItemAsync(userTokenKey)
+        const storedEmailKey = await SecureStore.getItemAsync(userEmailKey)
+        if (storedTokenKey) {
+            setToken(storedTokenKey)
+        }
+        if (storedEmailKey) {
+            setEmail(storedEmailKey)
+        }
+    }
+    useEffect(
+        React.useCallback(() => {
+            getData();
+        }, [])
+    );
+
+
+
     const handleSubmit = async () => {
         if (descripcion === '' || estado === '' || precio === '' || cambio === '' || expensas === '') {
             Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
@@ -33,19 +61,57 @@ export default function CrearPropiedad5({ navigation }) {
             ]);
         }
         else {
-            save('descripcion', descripcion)
-            save('estado', estado)
-            save('precio', precio)
-            save('cambio', cambio)
-            save('expensas', expensas)
-            try {
-                let res = await contactBackend("/properties", false, "POST", null, data, false, 201)
-                console.log(res)
-                navigation.navigate('logearInmobiliaria')
-                
-            } catch (e) {
-                console.log(e)
-            }
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("accept", "application/json");
+            myHeaders.append("authorization", token);
+
+            var raw = JSON.stringify({
+                "description": descripcion,
+                "associatedRealEstate": email,
+                "address": {
+                    "street": calle,
+                    "number": numero,
+                    "floor": piso,
+                    "department": departamento,
+                    "district": localidad,
+                    "town": ciudad,
+                    "province": provincia,
+                    "country": pais
+                },
+                "rooms": ambientes,
+                "bedrooms": habitaciones,
+                "bathrooms": banos,
+                "hasTerrace": terraza,
+                "hasBalcony": balcon,
+                "garage": "1",
+                "hasStorageRoom": baulera,
+                "age": "20",
+                "propertyType": "casa",
+                "squareMeters": {
+                    "covered": m2cub,
+                    "semiCovered": m2semi,
+                    "uncovered": m2desc
+                },
+                "frontOrBack": ubicacion,
+                "orientation": orientacion,
+                "amenities": "pileta",
+                "price": precio,
+                "expensesPrice": expensas,
+                "status": estado
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("https://myhome-backend.vercel.app/api/v1/properties", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
         }
     }
 

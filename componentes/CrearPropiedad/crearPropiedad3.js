@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
 
-export default function CrearPropiedad3({navigation}) {
+export default function CrearPropiedad3({route,navigation}) {
 
     const [m2cub, setM2cub] = useState('');
     const [m2semi, setM2semi] = useState('');
@@ -11,10 +10,9 @@ export default function CrearPropiedad3({navigation}) {
     const [ambientes, setAmbientes] = useState('');
     const [habitaciones, setHabitaciones] = useState('');
     const [banos, setBanos] = useState('');
+    
 
-    async function save(key,value){
-        await SecureStore.setItemAsync(key, value);
-    }
+    const {calle, numero, piso, departamento, localidad, ciudad, provincia, pais} = route.params;
 
     const handleSubmit = async () => {
         if(m2cub==='' || m2semi === '' || m2desc === '' || ambientes === ''|| habitaciones === ''|| banos === '' ){
@@ -23,13 +21,22 @@ export default function CrearPropiedad3({navigation}) {
               ]);
         }
         else{
-            save('m2cub',m2cub)
-            save('m2semi',m2semi)
-            save('m2desc',m2desc)
-            save('ambientes',ambientes)
-            save('habitaciones',habitaciones)
-            save('banos',banos)
-            navigation.navigate('Crear propiedad: Paso 4')
+            navigation.navigate('Crear propiedad: Paso 4',{
+                calle: calle,
+                numero: numero,
+                piso: piso,
+                departamento: departamento,
+                localidad: localidad,
+                ciudad: ciudad,
+                provincia: provincia,
+                pais: pais,
+                m2cub: m2cub,
+                m2semi: m2semi,
+                m2desc: m2desc,
+                ambientes: ambientes,
+                habitaciones: habitaciones,
+                banos: banos
+            })
     }
 }
 

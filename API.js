@@ -1,6 +1,6 @@
 const backendURL = "myhome-backend.vercel.app/api/v1/"
 
-export async function contactBackend(endpoint, accessRequired = false, method = "GET", queryParams = null, body = null, secure = false, expectedResponseCode = 200) {
+export async function contactBackend(endpoint, accessRequired = false, method = "GET", queryParams = null, body = null, secure = false, expectedResponseCode = 200, token = null) {
 
     try {
 
@@ -10,25 +10,30 @@ export async function contactBackend(endpoint, accessRequired = false, method = 
             (queryParams ? "?" + new URLSearchParams(queryParams) : "")
 
         let optionsObj = {
-            method: method
+            method: method,
+            headers: {}
         }
 
         if (accessRequired) {
-            optionsObj["headers"] = {};
-            optionsObj.headers["x-access-token"] = localStorage.getItem('token')
-        };
+            if (token) {
+                optionsObj.headers["authorization"] = `${token}`;
+                console.log("Authorization Header:", optionsObj.headers["authorization"]);
+              }
+        }
 
         if (body) {
             {
-                optionsObj["headers"] = {};
                 optionsObj["body"] = JSON.stringify(body);
                 optionsObj.headers["Content-Type"] = "application/json";
+                optionsObj.headers["accept"] = "application/json";
             }
         };
 
         console.log(optionsObj)
 
         let requestResponse = await fetch(urlString, optionsObj);
+
+        console.log("requestResponse:", JSON.stringify(requestResponse, null, 2)); // Log the response object as a JSON string
 
         if (requestResponse.status != expectedResponseCode) throw Error("Respuesta de backend no esperada");
 

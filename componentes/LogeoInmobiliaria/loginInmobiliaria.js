@@ -57,6 +57,7 @@ export default function LoginInmobiliaria({navigation}) {
                 console.log(res)
                 save('userToken',res.bearerToken)
                 save('fantasyName',res.user.fantasyName)
+                save('userMail',res.user.email)
                 navigation.navigate('mainPageInmobiliaria')
 
             }else{

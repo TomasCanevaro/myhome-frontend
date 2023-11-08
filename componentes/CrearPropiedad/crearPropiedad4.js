@@ -7,7 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 
 
 
-export default function CrearPropiedad4({ navigation }) {
+export default function CrearPropiedad4({route, navigation }) {
 
     const [checkTerraza, setCheckTerraza] = useState(false);
     const [checkBalcon, setCheckBalcon] = useState(false);
@@ -21,7 +21,7 @@ export default function CrearPropiedad4({ navigation }) {
         { label: 'Contrafrente', value: 'contrafrente' },
     ];
     const dataOrientacion = [
-        { label: 'Norte', value: 'frente' },
+        { label: 'Norte', value: 'norte' },
         { label: 'Sur', value: 'sur' },
         { label: 'Este', value: 'este' },
         { label: 'Oeste', value: 'oeste' },
@@ -34,9 +34,12 @@ export default function CrearPropiedad4({ navigation }) {
         { label: 'SUM', value: 'sum' },
         { label: 'Sala de juegos', value: 'juegos' },
     ];
+    
     async function save(key,value){
         await SecureStore.setItemAsync(key, value);
     }
+
+    const {calle, numero, piso, departamento, localidad, ciudad, provincia, pais, m2cub, m2semi, m2desc, ambientes, habitaciones, banos} = route.params;
 
     const handleSubmit = async () => {
         if(ubicacion==='' || orientacion === '' ){
@@ -45,30 +48,29 @@ export default function CrearPropiedad4({ navigation }) {
               ]);
         }
         else{
-            if(checkTerraza){
-                save('terraza','true')
-            }else{
-                save('terraza','false')
-            }
-            if(checkBalcon){
-                save('balcon','true')
-            }else{
-                save('balcon','false')
-            }
-            if(checkGarage){
-                save('garage','true')
-            }else{
-                save('garage','false')
-            }
-            if(checkBaulera){
-                save('baulera','true')
-            }else{
-                save('baulera','false')
-            }
-            save('ubicacion',ubicacion)
-            save('orientacion',orientacion)
-            save('amenities',amenities)
-            navigation.navigate('Crear propiedad: Paso 5')
+            navigation.navigate('Crear propiedad: Paso 5',{
+                calle: calle,
+                numero: numero,
+                piso: piso,
+                departamento: departamento,
+                localidad: localidad,
+                ciudad: ciudad,
+                provincia: provincia,
+                pais: pais,
+                m2cub: m2cub,
+                m2semi: m2semi,
+                m2desc: m2desc,
+                ambientes: ambientes,
+                habitaciones: habitaciones,
+                banos: banos,
+                terraza: checkTerraza,
+                balcon: checkBalcon,
+                garage: checkGarage,
+                baulera: checkBaulera,
+                ubicacion: ubicacion,
+                orientacion: orientacion,
+                amenities: amenities
+            })
     }
 }
 

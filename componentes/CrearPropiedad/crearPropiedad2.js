@@ -3,7 +3,8 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert} from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
-export default function CrearPropiedad2({navigation}) {
+
+export default function CrearPropiedad2({route,navigation}) {
 
     const [calle, setCalle] = useState('');
     const [numero, setNumero] = useState('');
@@ -25,21 +26,21 @@ export default function CrearPropiedad2({navigation}) {
               ]);
         }
         else{
-            save('calle',calle)
-            save('numero',numero)
-            save('piso',piso)
-            save('departamento',departamento)
-            save('localidad',localidad)
-            save('ciudad',ciudad)
-            save('provincia',provincia)
-            save('pais',pais)
-
             if(piso==='' && departamento===''){
                 save('tipoPropiedad','casa')
             }else{
                 save('tipoPropiedad','departamento')
             }
-            navigation.navigate('Crear propiedad: Paso 3')
+            navigation.navigate('Crear propiedad: Paso 3',{
+                calle: calle,
+                numero: numero,
+                piso: piso,
+                departamento: departamento,
+                localidad: localidad,
+                ciudad: ciudad,
+                provincia: provincia,
+                pais: pais,
+            })
     }
     
 }
