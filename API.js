@@ -26,8 +26,6 @@ export async function contactBackend(endpoint, accessRequired = false, method = 
                 optionsObj.headers["Content-Type"] = "application/json";
                 optionsObj.headers["accept"] = "application/json";
             }
-            optionsObj.body = JSON.stringify(body);
-            optionsObj.headers["Content-Type"] = "application/json";
         }
 
         console.log(optionsObj);
