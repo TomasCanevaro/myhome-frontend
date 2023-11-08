@@ -3,11 +3,10 @@ const backendURL = "myhome-backend.vercel.app/api/v1/"
 export async function contactBackend(endpoint, accessRequired = false, method = "GET", queryParams = null, body = null, secure = false, expectedResponseCode = 200, token = null) {
 
     try {
-
         let urlString = (secure ? "https://" : "http://") +
-            (backendURL) +
-            (endpoint) +
-            (queryParams ? "?" + new URLSearchParams(queryParams) : "")
+            backendURL +
+            endpoint +
+            (queryParams ? "?" + new URLSearchParams(queryParams).toString() : "")
 
         let optionsObj = {
             method: method,
@@ -27,9 +26,11 @@ export async function contactBackend(endpoint, accessRequired = false, method = 
                 optionsObj.headers["Content-Type"] = "application/json";
                 optionsObj.headers["accept"] = "application/json";
             }
-        };
+            optionsObj.body = JSON.stringify(body);
+            optionsObj.headers["Content-Type"] = "application/json";
+        }
 
-        console.log(optionsObj)
+        console.log(optionsObj);
 
         let requestResponse = await fetch(urlString, optionsObj);
 
@@ -44,8 +45,7 @@ export async function contactBackend(endpoint, accessRequired = false, method = 
     } catch (e) {
 
         console.log(e);
-        throw Error("Solicitud fallida")
+        throw new Error("Solicitud fallida")
 
     }
-
 }
