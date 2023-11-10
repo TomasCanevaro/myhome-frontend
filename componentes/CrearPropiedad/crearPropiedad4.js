@@ -7,7 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 
 
 
-export default function CrearPropiedad4({route, navigation }) {
+export default function CrearPropiedad4({ route, navigation }) {
 
     const [checkTerraza, setCheckTerraza] = useState(false);
     const [checkBalcon, setCheckBalcon] = useState(false);
@@ -31,24 +31,24 @@ export default function CrearPropiedad4({route, navigation }) {
         { label: 'Pileta', value: 'pileta' },
         { label: 'Jacuzzi', value: 'jacuzzi' },
         { label: 'Sauna', value: 'sauna' },
-        { label: 'SUM', value: 'sum' },
-        { label: 'Sala de juegos', value: 'juegos' },
+        { label: 'SUM', value: 'SUM' },
+        { label: 'Sala de juegos', value: 'sala de juegos' },
     ];
-    
-    async function save(key,value){
+
+    async function save(key, value) {
         await SecureStore.setItemAsync(key, value);
     }
 
-    const {calle, numero, piso, departamento, localidad, ciudad, provincia, pais, m2cub, m2semi, m2desc, ambientes, habitaciones, banos} = route.params;
+    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais, m2cub, m2semi, m2desc, ambientes, habitaciones, banos } = route.params;
 
     const handleSubmit = async () => {
-        if(ubicacion==='' || orientacion === '' ){
+        if (ubicacion === '' || orientacion === '') {
             Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
-              ]);
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
         }
-        else{
-            navigation.navigate('Crear propiedad: Paso 5',{
+        else {
+            navigation.navigate('Crear propiedad: Paso 5', {
                 calle: calle,
                 numero: numero,
                 piso: piso,
@@ -71,8 +71,27 @@ export default function CrearPropiedad4({route, navigation }) {
                 orientacion: orientacion,
                 amenities: amenities
             })
+        }
     }
-}
+
+    const volverAtras = async () => {
+        navigation.navigate('Crear propiedad: Paso 3', {
+            calle: calle,
+            numero: numero,
+            piso: piso,
+            departamento: departamento,
+            localidad: localidad,
+            ciudad: ciudad,
+            provincia: provincia,
+            pais: pais,
+            m2cub: m2cub,
+            m2semi: m2semi,
+            m2desc: m2desc,
+            ambientes: ambientes,
+            habitaciones: habitaciones,
+            banos: banos,
+        })
+    }
 
     return (
         <View style={styles.container}>
@@ -141,23 +160,23 @@ export default function CrearPropiedad4({route, navigation }) {
                         setOrientacion(item.value);
                     }}
                 />
-                    <Text style={styles.rawText}>Amenities</Text>
-                    <MultiSelect
-                        style={styles.dropdown}
-                        placeholder=''
-                        iconStyle={styles.iconStyle}
-                        data={dataAmenities}
-                        labelField="label"
-                        valueField="value"
-                        value={amenities}
-                        onChange={item => {
-                            setAmenities(item);
-                        }}
-                    />
+                <Text style={styles.rawText}>Amenities</Text>
+                <MultiSelect
+                    style={styles.dropdown}
+                    placeholder=''
+                    iconStyle={styles.iconStyle}
+                    data={dataAmenities}
+                    labelField="label"
+                    valueField="value"
+                    value={amenities}
+                    onChange={item => {
+                        setAmenities(item);
+                    }}
+                />
             </View>
 
             <View style={styles.fila}>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 3')} >
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={volverAtras} >
                     <Text style={styles.textoBoton}>Volver</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >

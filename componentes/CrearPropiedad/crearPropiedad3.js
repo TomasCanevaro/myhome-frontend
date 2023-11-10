@@ -40,6 +40,19 @@ export default function CrearPropiedad3({route,navigation}) {
     }
 }
 
+const volverAtras = async () => {
+    navigation.navigate('Crear propiedad: Paso 2', {
+        calle: calle,
+        numero: numero,
+        piso: piso,
+        departamento: departamento,
+        localidad: localidad,
+        ciudad: ciudad,
+        provincia: provincia,
+        pais: pais,
+    })
+}
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Dimensiones</Text>
@@ -99,7 +112,7 @@ export default function CrearPropiedad3({route,navigation}) {
             </View>
 
         <View style={styles.fila}>
-            <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 2')} >
+            <TouchableOpacity style={styles.boton} title="Press me" onPress={volverAtras} >
                 <Text style={styles.textoBoton}>Volver</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >

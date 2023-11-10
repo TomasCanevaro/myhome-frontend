@@ -19,8 +19,8 @@ export default function CrearPropiedad5({ route, navigation }) {
         { label: 'En venta', value: 'en venta' },
     ];
     const dataCambio = [
-        { label: 'Pesos', value: 'pesos' },
-        { label: 'Dólares', value: 'dolares' },
+        { label: 'Pesos', value: 'ars' },
+        { label: 'Dólares', value: 'usd' },
     ];
 
     async function save(key, value) {
@@ -67,6 +67,7 @@ export default function CrearPropiedad5({ route, navigation }) {
             myHeaders.append("authorization", token);
 
             var raw = JSON.stringify({
+                "currency": cambio,
                 "description": descripcion,
                 "associatedRealEstate": email,
                 "address": {
@@ -95,7 +96,7 @@ export default function CrearPropiedad5({ route, navigation }) {
                 },
                 "frontOrBack": ubicacion,
                 "orientation": orientacion,
-                "amenities": "pileta",
+                "amenities": amenities,
                 "price": precio,
                 "expensesPrice": expensas,
                 "status": estado
@@ -108,11 +109,53 @@ export default function CrearPropiedad5({ route, navigation }) {
                 redirect: 'follow'
             };
 
+
             fetch("https://myhome-backend.vercel.app/api/v1/properties", requestOptions)
-                .then(response => response.text())
-                .then(result => console.log(result))
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        Alert.alert('Éxito', 'La propiedad fue creada con éxito', [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                        navigation.navigate('Inicio')
+                    } else {
+                        console.log('Error de backend:', result)
+                        console.log(result.success)
+                        console.log(result.message)
+                        Alert.alert('Error', 'Hubo un error al crear la propiedad, por favor intente nuevamente', [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ])
+                    }
+                })
                 .catch(error => console.log('error', error));
+
         }
+    }
+
+    const volverAtras = async () => {
+        navigation.navigate('Crear propiedad: Paso 4', {
+            calle: calle,
+            numero: numero,
+            piso: piso,
+            departamento: departamento,
+            localidad: localidad,
+            ciudad: ciudad,
+            provincia: provincia,
+            pais: pais,
+            m2cub: m2cub,
+            m2semi: m2semi,
+            m2desc: m2desc,
+            ambientes: ambientes,
+            habitaciones: habitaciones,
+            banos: banos,
+            terraza: terraza,
+            balcon: balcon,
+            garage: garage,
+            baulera: baulera,
+            ubicacion: ubicacion,
+            orientacion: orientacion,
+            amenities: amenities
+        })
     }
 
 
@@ -191,7 +234,7 @@ export default function CrearPropiedad5({ route, navigation }) {
             </View>
 
             <View style={styles.fila}>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 4')} >
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={volverAtras} >
                     <Text style={styles.textoBoton}>Volver</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
