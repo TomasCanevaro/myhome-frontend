@@ -7,12 +7,13 @@ export default function CrearPropiedad3({route,navigation}) {
     const [m2cub, setM2cub] = useState('');
     const [m2semi, setM2semi] = useState('');
     const [m2desc, setM2desc] = useState('');
+    const [antiguedad, setAntiguedad] = useState('')
     const [ambientes, setAmbientes] = useState('');
     const [habitaciones, setHabitaciones] = useState('');
     const [banos, setBanos] = useState('');
     
 
-    const {calle, numero, piso, departamento, localidad, ciudad, provincia, pais} = route.params;
+    const {calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad} = route.params;
 
     const handleSubmit = async () => {
         if(m2cub==='' || m2semi === '' || m2desc === '' || ambientes === ''|| habitaciones === ''|| banos === '' ){
@@ -30,13 +31,24 @@ export default function CrearPropiedad3({route,navigation}) {
                 ciudad: ciudad,
                 provincia: provincia,
                 pais: pais,
+                latitud: latitud,
+                longitud: longitud,
+                tipoPropiedad: tipoPropiedad,
                 m2cub: m2cub,
                 m2semi: m2semi,
                 m2desc: m2desc,
+                antiguedad: antiguedad,
                 ambientes: ambientes,
                 habitaciones: habitaciones,
                 banos: banos
             })
+            setM2cub('');
+            setM2semi('');
+            setM2desc('');
+            setAntiguedad('')
+            setAmbientes('');
+            setHabitaciones('');
+            setBanos('');
     }
 }
 
@@ -50,6 +62,9 @@ const volverAtras = async () => {
         ciudad: ciudad,
         provincia: provincia,
         pais: pais,
+        latitud: latitud,
+        longitud: longitud,
+        tipoPropiedad: tipoPropiedad
     })
 }
 
@@ -85,6 +100,14 @@ const volverAtras = async () => {
 
             <Text style={styles.title}>Datos de la propiedad</Text>
             <View style={styles.form}>
+            <View style={styles.fila}>
+                    <Text style={styles.rawText}>Años de antiguedad</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={antiguedad}
+                        onChangeText={setAntiguedad}
+                        inputMode='numeric' />
+                </View>
                 <View style={styles.fila}>
                     <Text style={styles.rawText}>Ambientes</Text>
                     <TextInput

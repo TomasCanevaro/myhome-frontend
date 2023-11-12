@@ -11,8 +11,8 @@ export default function CrearPropiedad4({ route, navigation }) {
 
     const [checkTerraza, setCheckTerraza] = useState(false);
     const [checkBalcon, setCheckBalcon] = useState(false);
-    const [checkGarage, setCheckGarage] = useState(false);
     const [checkBaulera, setCheckBaulera] = useState(false);
+    const [garage, setGarage] = useState('');
     const [ubicacion, setUbicacion] = useState('');
     const [orientacion, setOrientacion] = useState('');
     const [amenities, setAmenities] = useState('');
@@ -39,7 +39,7 @@ export default function CrearPropiedad4({ route, navigation }) {
         await SecureStore.setItemAsync(key, value);
     }
 
-    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais, m2cub, m2semi, m2desc, ambientes, habitaciones, banos } = route.params;
+    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad, m2cub, m2semi, m2desc, antiguedad, ambientes, habitaciones, banos } = route.params;
 
     const handleSubmit = async () => {
         if (ubicacion === '' || orientacion === '') {
@@ -57,20 +57,31 @@ export default function CrearPropiedad4({ route, navigation }) {
                 ciudad: ciudad,
                 provincia: provincia,
                 pais: pais,
+                latitud: latitud,
+                longitud: longitud,
+                tipoPropiedad: tipoPropiedad,
                 m2cub: m2cub,
                 m2semi: m2semi,
                 m2desc: m2desc,
+                antiguedad: antiguedad,
                 ambientes: ambientes,
                 habitaciones: habitaciones,
                 banos: banos,
                 terraza: checkTerraza,
                 balcon: checkBalcon,
-                garage: checkGarage,
                 baulera: checkBaulera,
+                garage: garage,
                 ubicacion: ubicacion,
                 orientacion: orientacion,
                 amenities: amenities
             })
+            setCheckTerraza(false);
+            setCheckBalcon(false);
+            setCheckBaulera(false);
+            setGarage('')
+            setUbicacion('');
+            setOrientacion('');
+            setAmenities('');
         }
     }
 
@@ -84,6 +95,9 @@ export default function CrearPropiedad4({ route, navigation }) {
             ciudad: ciudad,
             provincia: provincia,
             pais: pais,
+            latitud: latitud,
+            longitud: longitud,
+            tipoPropiedad: tipoPropiedad,
             m2cub: m2cub,
             m2semi: m2semi,
             m2desc: m2desc,
@@ -112,20 +126,23 @@ export default function CrearPropiedad4({ route, navigation }) {
                         onValueChange={setCheckBalcon} />
                 </View>
                 <View style={styles.fila}>
-                    <Text style={styles.checkText}>Garage</Text>
-                    <Checkbox
-                        style={styles.checkbox}
-                        value={checkGarage}
-                        onValueChange={setCheckGarage} />
-                </View>
-                <View style={styles.fila}>
                     <Text style={styles.checkText}>Baulera</Text>
                     <Checkbox
                         style={styles.checkbox}
                         value={checkBaulera}
                         onValueChange={setCheckBaulera} />
                 </View>
+                <View style={styles.fila}>
+                    <Text style={styles.garageText}>Garage (cantidad)</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={garage}
+                        onChangeText={setGarage}
+                        inputMode='numeric'
+                        required />
+                </View>
             </View>
+            
 
             <View style={styles.form2}>
                 <Text style={styles.rawText}>Ubicacion</Text>
@@ -169,6 +186,7 @@ export default function CrearPropiedad4({ route, navigation }) {
                     labelField="label"
                     valueField="value"
                     value={amenities}
+                    selectedStyle={styles.selectedStyle}
                     onChange={item => {
                         setAmenities(item);
                     }}
@@ -213,7 +231,7 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 35,
-        width: 150,
+        width: 50,
         backgroundColor: 'rgba(256, 256, 256, 0.6)',
         marginBottom: 15,
         padding: 10,
@@ -222,6 +240,12 @@ const styles = StyleSheet.create({
     rawText: {
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    garageText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 18,
+        marginRight: 20,
     },
     checkText: {
         fontSize: 16,
@@ -307,4 +331,24 @@ const styles = StyleSheet.create({
         width: 50,
         fontSize: 16,
     },
+    selectedStyle: {
+        flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 14,
+      backgroundColor: 'white',
+      shadowColor: '#000',
+      marginTop: 8,
+      marginRight: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.2,
+      shadowRadius: 1.41,
+
+      elevation: 2
+      },
 });

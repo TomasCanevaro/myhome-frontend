@@ -1,73 +1,168 @@
-import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, Image, View, TouchableOpacity, Alert } from 'react-native';
 import Card from '../Reusables/card';
+import React, { useState, useEffect } from 'react';
+import * as SecureStore from 'expo-secure-store';
 
 export default function MisPropiedades() {
+
+    const [misPropiedades, setMisPropiedades] = useState([]);
+    const [token, setToken] = useState('');
+    const [email, setEmail] = useState('')
+
+    const mostrarPropiedades = async () => {
+        const endpoint = 'https://myhome-backend.vercel.app/api/v1/properties';
+        const queryString = `associatedRealEstate=${encodeURIComponent(email)}`;
+
+        const url = `${endpoint}?${queryString}`;
+
+        const myHeaders = new Headers({
+            'accept': 'application/json',
+            'authorization': `${token}`,
+        });
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: myHeaders,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const result = await response.json();
+            if (result.success) {
+                console.log(result);
+                console.log(url)
+                setMisPropiedades(result.properties);
+            } else {
+                console.log('Error de backend:', result);
+                console.log(result.success);
+                console.log(result.message);
+                Alert.alert('Error', 'Hubo un error al mostrar las propiedades, por favor intente nuevamente', [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ]);
+            }
+        } catch (error) {
+            console.log(token)
+            console.error('Fetch error:', error);
+            
+        }
+    }
+
+    const handleDeleteProperty = async (propertyId) => {
+        Alert.alert(
+          'Confirmar',
+          '¿Estás seguro que deseas borrar esta propiedad?',
+          [
+            {
+              text: 'Cancelar',
+              style: 'cancel',
+            },
+            {
+              text: 'Borrar',
+              onPress: async () => {
+                try {
+                  const response = await fetch(`https://myhome-backend.vercel.app/api/v1/properties/${propertyId}`, {
+                    method: 'DELETE',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `${token}`,
+                    },
+                  });
+                  
+                  if (!response.ok) {
+                    const errorMessage = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
+                  }
+                  
+                  setMisPropiedades((prevProperties) => prevProperties.filter(property => property.id !== propertyId));
+                  
+                  console.log('Propiedad borrada correctamente');
+                  await mostrarPropiedades();
+                } catch (error) {
+                  console.error('Error borrando propiedad:', error.message);
+                }
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+      };
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const userTokenKey = 'userToken';
+            const userEmailKey = 'userMail';
+    
+            const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
+            const storedEmailKey = await SecureStore.getItemAsync(userEmailKey);
+    
+            if (storedTokenKey) {
+              setToken(storedTokenKey);
+            }
+    
+            if (storedEmailKey) {
+              setEmail(storedEmailKey);
+            }
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+    
+        fetchData();
+      }, []); 
+    
+      useEffect(() => {
+        const fetchPropiedades = async () => {
+          if (token && email) {
+            await mostrarPropiedades();
+          }
+        };
+    
+        fetchPropiedades();
+      }, [token,email]);
+
     return (
         <View style={styles.container}>
-            <Card>
-                <View style={styles.columna}>
-                    <Image
-                        style={styles.icono}
-                        source={require('../../assets/casa.png')}
-                    />
-                </View>
-                <View style={styles.columna2}>
-                    <Text style={styles.title}>Casa en alquiler</Text>
-                </View>
-                <View style={styles.columna3}>
-                    <Text style={styles.rawText}>$150.000</Text>
-                    <Text style={styles.rawText}>3 amb.</Text>
-                    <Text style={styles.rawText}>Pilar</Text>
-                    <View style={styles.columna4}>
+            {misPropiedades.map((property, index) => (
+                <Card key = {index}>
+                    <View style={styles.columna}>
                         <TouchableOpacity>
-                            <Image
-                                style={styles.clickableIcon}
-                                source={require('../../assets/edit.png')}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image
-                                style={styles.clickableIcon}
-                                source={require('../../assets/delete.png')}
-                            />
+                        <Image
+                            style={styles.icono}
+                            source={require('../../assets/casa.png')}
+                        />
                         </TouchableOpacity>
                     </View>
-                </View>
-            </Card>
-            <Card>
-                <View style={styles.columna}>
-                    <Image
-                        style={styles.icono}
-                        source={require('../../assets/casa.png')}
-                    />
-                </View>
-                <View style={styles.columna2}>
-                    <Text style={styles.title}>Casa en alquiler</Text>
-                </View>
-                <View style={styles.columna3}>
-                    <Text style={styles.rawText}>$150.000</Text>
-                    <Text style={styles.rawText}>3 amb.</Text>
-                    <Text style={styles.rawText}>Pilar</Text>
-                    <View style={styles.columna4}>
+                    <View style={styles.columna2}>
                         <TouchableOpacity>
-                            <Image
-                                style={styles.clickableIcon}
-                                source={require('../../assets/edit.png')}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image
-                                style={styles.clickableIcon}
-                                source={require('../../assets/delete.png')}
-                            />
+                            <Text style={styles.title}>{property.propertyType} {property.status}</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
-            </Card>
+                    <View style={styles.columna3}>
+                        <Text style={styles.rawText}>${property.price}</Text>
+                        <Text style={styles.rawText}>{property.rooms} amb.</Text>
+                        <Text style={styles.rawText}>{property.address.district}</Text>
+                        <View style={styles.columna4}>
+                            <TouchableOpacity>
+                                <Image
+                                    style={styles.clickableIcon}
+                                    source={require('../../assets/edit.png')}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => handleDeleteProperty(property._id)}>
+                                <Image
+                                    style={styles.clickableIcon}
+                                    source={require('../../assets/delete.png')}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Card>
+            ))}
         </View>
-        
     );
 }
 
@@ -86,7 +181,7 @@ const styles = StyleSheet.create({
         padding: 15,
         alignContent: 'center',
         alignItems: 'center',
-        flex: 4
+        flex: 5
     },
     columna3: {
         alignContent: 'center',
@@ -102,9 +197,10 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
+        textTransform: 'capitalize'
     },
     rawText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: 'bold'
     },
     icono: {
@@ -115,6 +211,7 @@ const styles = StyleSheet.create({
         width: 35,
         height: 35,
         marginStart: 10
-    }
+    },
+    
 
 })

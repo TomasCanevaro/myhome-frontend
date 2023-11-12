@@ -27,8 +27,8 @@ export default function CrearPropiedad5({ route, navigation }) {
         await SecureStore.setItemAsync(key, value);
     }
 
-    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais,
-        m2cub, m2semi, m2desc, ambientes, habitaciones, banos,
+    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad,
+        m2cub, m2semi, m2desc, antiguedad, ambientes, habitaciones, banos,
         terraza, balcon, garage, baulera, ubicacion, orientacion, amenities } = route.params;
 
     const [token, setToken] = useState('');
@@ -80,15 +80,19 @@ export default function CrearPropiedad5({ route, navigation }) {
                     "province": provincia,
                     "country": pais
                 },
+                "geolocation": {
+                    "latitude": latitud,
+                    "longitude": longitud
+                  },
                 "rooms": ambientes,
                 "bedrooms": habitaciones,
                 "bathrooms": banos,
                 "hasTerrace": terraza,
                 "hasBalcony": balcon,
-                "garage": "1",
+                "garage": garage,
                 "hasStorageRoom": baulera,
-                "age": "20",
-                "propertyType": "casa",
+                "age": antiguedad,
+                "propertyType": tipoPropiedad,
                 "squareMeters": {
                     "covered": m2cub,
                     "semiCovered": m2semi,
@@ -117,14 +121,19 @@ export default function CrearPropiedad5({ route, navigation }) {
                         Alert.alert('Éxito', 'La propiedad fue creada con éxito', [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
-                        navigation.navigate('Inicio')
-                    } else {
-                        console.log('Error de backend:', result)
-                        console.log(result.success)
-                        console.log(result.message)
-                        Alert.alert('Error', 'Hubo un error al crear la propiedad, por favor intente nuevamente', [
+                        navigation.navigate('Inicio');
+                        setDescripcion('');
+                        setEstado('');
+                        setPrecio('');
+                        setCambio('');
+                        setExpensas('');
+                    }else {
+                        console.log('Error de backend:', result);
+                        console.log(result.success);
+                        console.log(result.message);
+                        Alert.alert('Error', result.message, [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
-                        ])
+                        ]);
                     }
                 })
                 .catch(error => console.log('error', error));
@@ -142,6 +151,9 @@ export default function CrearPropiedad5({ route, navigation }) {
             ciudad: ciudad,
             provincia: provincia,
             pais: pais,
+            latitud: latitud,
+            longitud: longitud,
+            tipoPropiedad: tipoPropiedad,
             m2cub: m2cub,
             m2semi: m2semi,
             m2desc: m2desc,
