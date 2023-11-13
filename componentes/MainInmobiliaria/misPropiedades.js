@@ -1,9 +1,10 @@
 import { StyleSheet, Text, Image, View, TouchableOpacity, Alert } from 'react-native';
 import Card from '../Reusables/card';
 import React, { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 
-export default function MisPropiedades() {
+export default function MisPropiedades({ navigation }) {
     const [misPropiedades, setMisPropiedades] = useState([]);
     const [token, setToken] = useState('');
     const [email, setEmail] = useState('')
@@ -45,6 +46,12 @@ export default function MisPropiedades() {
         }
     }
 
+    const proximamente = async => {
+        Alert.alert('Próximamente', 'Todavía no es posible editar propiedades', [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+    }
+
     const handleDeleteProperty = async (propertyId) => {
         Alert.alert(
             'Confirmar',
@@ -71,7 +78,12 @@ export default function MisPropiedades() {
                             }
                             setMisPropiedades((prevProperties) => prevProperties.filter(property => property.id !== propertyId));
                             console.log('Propiedad borrada correctamente');
-                            await mostrarPropiedades();
+
+                            if (misPropiedades.length > 1) {
+                                await mostrarPropiedades();
+                            } else {
+                                setMisPropiedades([]);
+                            }
                         } catch (error) {
                             console.error('Error borrando propiedad:', error.message);
                         }
@@ -102,62 +114,71 @@ export default function MisPropiedades() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        const fetchPropiedades = async () => {
-            if (token && email) {
-                await mostrarPropiedades();
-            }
-        }
-        fetchPropiedades();
-    }, [token, email]);
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchPropiedades = async () => {
+                if (token && email) {
+                    await mostrarPropiedades();
+                }
+            };
+            fetchPropiedades();
+        }, [token, email])
+    );
+
 
     return (
         <View style={styles.container}>
-            {misPropiedades.map((property, index) => (
-                <Card key={index}>
-                    <View style={styles.columna}>
-                        {property.propertyType === 'casa' ? (
-                            <TouchableOpacity>
-                                <Image
-                                    style={styles.icono}
-                                    source={require('../../assets/casa.png')}
-                                />
-                            </TouchableOpacity>) : (
-                            <TouchableOpacity>
-                                <Image
-                                    style={styles.iconoEdificio}
-                                    source={require('../../assets/edificio.png')}
-                                />
-                            </TouchableOpacity>
-                        )}
-                    </View>
-                    <View style={styles.columna2}>
-                        <TouchableOpacity>
-                            <Text style={styles.title}>{property.propertyType} {property.status}</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.columna3}>
-                        <Text style={styles.rawText}>${property.price}</Text>
-                        <Text style={styles.rawText}>{property.rooms} amb.</Text>
-                        <Text style={styles.rawText}>{property.address.district}</Text>
-
-                        <View style={styles.columna4}>
-                            <TouchableOpacity>
-                                <Image
-                                    style={styles.clickableIcon}
-                                    source={require('../../assets/edit.png')}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => handleDeleteProperty(property._id)}>
-                                <Image
-                                    style={styles.clickableIcon}
-                                    source={require('../../assets/delete.png')}
-                                />
+            {misPropiedades.length === 0 ? (
+                <Text style={styles.noPropertiesText}>No hay propiedades para mostrar.</Text>
+            ) : (
+                misPropiedades.map((property, index) => (
+                    <Card key={index}>
+                        <View style={styles.columna}>
+                            {property.propertyType === 'casa' ? (
+                                <TouchableOpacity onPress={() => navigation.navigate('Ver propiedad', { propertyID: property._id })}>
+                                    <Image
+                                        style={styles.icono}
+                                        source={require('../../assets/casa.png')}
+                                    />
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity onPress={() => navigation.navigate('Ver propiedad', { propertyID: property._id })}>
+                                    <Image
+                                        style={styles.iconoEdificio}
+                                        source={require('../../assets/edificio.png')}
+                                    />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                        <View style={styles.columna2}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Ver propiedad', { propertyID: property._id })}>
+                                <Text style={styles.title}>{property.propertyType} {property.status}</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
-                </Card>
-            ))}
+                        <View style={styles.columna3}>
+                            <Text style={styles.rawText}>{property.price} {property.currency}</Text>
+                            <Text style={styles.rawText}>{property.rooms} amb.</Text>
+                            <Text style={styles.rawText}>{property.address.district}</Text>
+
+
+                            <View style={styles.columna4}>
+                                <TouchableOpacity onPress={() => proximamente()}>
+                                    <Image
+                                        style={styles.clickableIcon}
+                                        source={require('../../assets/edit.png')}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => handleDeleteProperty(property._id)}>
+                                    <Image
+                                        style={styles.clickableIcon}
+                                        source={require('../../assets/delete.png')}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Card>
+                ))
+            )}
         </View>
     );
 }
@@ -211,6 +232,11 @@ const styles = StyleSheet.create({
         height: 35,
         marginStart: 10
     },
-
+    noPropertiesText: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: 20,
+        color: 'gray',
+    },
 
 })

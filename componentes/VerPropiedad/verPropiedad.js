@@ -1,190 +1,173 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, ActivityIndicator, Linking, View, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import * as Location from 'expo-location';
+import * as SecureStore from 'expo-secure-store';
 
 export default function VerPropiedad({ route, navigation }) {
-    const [calle, setCalle] = useState('');
-    const [numero, setNumero] = useState('');
-    const [piso, setPiso] = useState('');
-    const [departamento, setDepartamento] = useState('');
-    const [localidad, setLocalidad] = useState('');
-    const [ciudad, setCiudad] = useState('');
-    const [provincia, setProvincia] = useState('');
-    const [pais, setPais] = useState('');
-    const [latitud, setLatitud] = useState('');
-    const [longitud, setLongitud] = useState('');
-    const [tipoPropiedad, setTipoPropiedad] = useState('');
-    const dataTipo = [
-        { label: 'Casa', value: 'casa' },
-        { label: 'Departamento', value: 'departamento' },
-        { label: 'PH', value: 'ph' },
-        { label: 'Local', value: 'local' },
-        { label: 'Oficina', value: 'oficina' },
-        { label: 'Galpon', value: 'galpon' },
-        { label: 'Terreno', value: 'terreno' },
-    ];
-    const [location, setLocation] = useState({
-        latitud: null,
-        longitud: null,
-    });
-    const {selectedImages} = route.params;
+
+    const [propiedad, setPropiedad] = useState({});
+    const { propertyID } = route.params;
+    const [token, setToken] = useState('');
 
     useEffect(() => {
-        console.log('Location updated:', location);
-        setLatitud(location.latitud)
-        setLongitud(location.longitud)
-    }, [location]);
+        const fetchData = async () => {
+            try {
+                const userTokenKey = 'userToken';
+                const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
+                if (storedTokenKey && propertyID) {
+                    setToken(storedTokenKey);
+                }
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
 
-    const geocode = async () => {
-        Location.requestForegroundPermissionsAsync();
-        const address = `${calle} ${numero}, ${localidad}`
-        const geocodedLocation = await Location.geocodeAsync(address);
-        const firstResult = geocodedLocation[0]
-        if (firstResult) {
-            console.log('Geocoding result:', firstResult);
-            setLocation({
-                latitud: firstResult.latitude,
-                longitud: firstResult.longitude
-            })
-        } else {
-            console.log('Geocoding result is empty')
-        }
-        console.log("Geocoded Address")
-    }
+        fetchData();
+    }, [propertyID]);
 
-    const handleSubmit = async () => {
-        if (calle === '' || numero === '' || localidad === '' || ciudad === '' || provincia === '' || pais === '') {
-            Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ]);
-        }
-        else {
-            await geocode();
-            navigation.navigate('Crear propiedad: Paso 3', {
-                imagenes: selectedImages,
-                calle: calle,
-                numero: numero,
-                piso: piso,
-                departamento: departamento,
-                localidad: localidad,
-                ciudad: ciudad,
-                provincia: provincia,
-                pais: pais,
-                latitud: latitud,
-                longitud: longitud,
-                tipoPropiedad: tipoPropiedad,
+    const mostrarPropiedad = async (token, propertyID) => {
+        try {
+            const endpoint = 'https://myhome-backend.vercel.app/api/v1/properties';
+            const queryString = `id=${encodeURIComponent(propertyID)}`;
+            const url = `${endpoint}?${queryString}`;
+            const myHeaders = new Headers({
+                'accept': 'application/json',
+                'authorization': `${token}`,
             });
-            setCalle('');
-            setNumero('');
-            setPiso('');
-            setDepartamento('');
-            setLocalidad('');
-            setCiudad('');
-            setProvincia('');
-            setPais('');
-            setLatitud('');
-            setLongitud('');
-            setTipoPropiedad('')
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: myHeaders,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success && result.properties.length > 0) {
+                console.log(result);
+                setPropiedad(result.properties[0] || {});
+            } else {
+                console.log('Error de backend:', result);
+                console.log(result.success);
+                console.log(result.message);
+                Alert.alert('Error', 'Hubo un error al mostrar la propiedad, por favor intente nuevamente', [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ]);
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
         }
+    };
+
+    useEffect(() => {
+        if (token && propertyID) {
+            mostrarPropiedad(token, propertyID);
+            console.log(propiedad)
+        }
+    }, [token, propertyID]);
+
+    useEffect(() => {
+        console.log(propiedad);
+    }, [propiedad]);
+
+
+
+    if (!propiedad || !propiedad.address) {
+        return null;
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Complete la dirección</Text>
-            <View style={styles.form}>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Tipo</Text>
-                    <Dropdown
-                        style={styles.input}
-                        placeholder=''
-                        selectedTextStyle={styles.selectedTextStyle}
-                        inputSearchStyle={styles.inputSearchStyle}
-                        data={dataTipo}
-                        maxHeight={300}
-                        labelField="label"
-                        valueField="value"
-                        value={tipoPropiedad}
-                        onChange={item => {
-                            setTipoPropiedad(item.value);
-                        }}
-                    />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Calle</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={calle}
-                        onChangeText={setCalle}
-                        required />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Número</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={numero}
-                        onChangeText={setNumero}
-                        inputMode='numeric'
-                        required />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Piso</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={piso}
-                        onChangeText={setPiso}
-                        inputMode='numeric' />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Departamento</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={departamento}
-                        onChangeText={setDepartamento} />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Localidad</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={localidad}
-                        onChangeText={setLocalidad}
-                        required />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Ciudad</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={ciudad}
-                        onChangeText={setCiudad}
-                        required />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>Provincia</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={provincia}
-                        onChangeText={setProvincia}
-                        required />
-                </View>
-                <View style={styles.fila}>
-                    <Text style={styles.rawText}>País</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={pais}
-                        onChangeText={setPais}
-                        required />
-                </View>
-            </View>
+        <ScrollView contentContainerStyle={styles.container}>
+            {propiedad && (
+                <React.Fragment>
+                    <Text style={styles.title}>
+                        {propiedad.propertyType} {propiedad.status} - {propiedad.address.district}
+                    </Text>
+                    <View style={styles.imageContainer}>
+                        {propiedad.photos.map((photo, index) => (
+                            <Image key={index} source={{ uri: photo }} style={styles.image} />
+                        ))}
+                    </View>
+                    <View style={styles.form}>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Descripción: </Text>
+                            <View style={styles.descripcionContainer}>
+                                <Text style={styles.rawText2}>{propiedad.description} </Text>
+                            </View>
+                        </View>
 
-            <View style={styles.fila}>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 1')} >
-                    <Text style={styles.textoBoton}>Volver</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
-                    <Text style={styles.textoBoton}>Siguiente</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Dirección: </Text>
+                            <View style={styles.descripcionContainer}>
+                                <Text style={styles.rawText2}>{propiedad.address.street}{propiedad.address.number}, {propiedad.address.district}, {propiedad.address.province} </Text>
+                            </View>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Precio:</Text>
+                            <Text style={styles.rawText2}>{propiedad.price} {propiedad.currency}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Expensas:</Text>
+                            <Text style={styles.rawText2}>{propiedad.expensesPrice} {propiedad.currency}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Metros cuadrados cubiertos: </Text>
+                            <Text style={styles.rawText2}>{propiedad.squareMeters.covered}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Metros cuadrados semicubiertos: </Text>
+                            <Text style={styles.rawText2}>{propiedad.squareMeters.semiCovered}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Metros cuadrados descubiertos: </Text>
+                            <Text style={styles.rawText2}>{propiedad.squareMeters.uncovered}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Habitaciones: </Text>
+                            <Text style={styles.rawText2}>{propiedad.bedrooms}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Baños </Text>
+                            <Text style={styles.rawText2}>{propiedad.bathrooms}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.form}>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Contacto:</Text>
+                            <Text style={styles.rawText2}>{propiedad.associatedRealEstate}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.fila}>
+                        <TouchableOpacity
+                            style={styles.boton}
+                            title="Press me"
+                            onPress={() => navigation.navigate('Mis propiedades')}
+                        >
+                            <Text style={styles.textoBoton}>Volver</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.boton}
+                            title="Press me"
+                            onPress={() => {
+                                const { latitude, longitude } = propiedad.geolocation;
+
+                                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+
+                                Linking.openURL(mapsUrl).catch((err) => console.error('Error al abrir Google Maps', err));
+                            }}
+                        >
+                            <Text style={styles.textoBoton}>Abrir en Maps</Text>
+                        </TouchableOpacity>
+                    </View>
+                </React.Fragment>
+            )}
+        </ScrollView>
     );
 }
 
@@ -193,12 +176,15 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         backgroundColor: 'rgba(256, 256, 256, 0.6)',
         marginHorizontal: 15,
-        marginVertical: 50,
+        marginVertical: 10,
         padding: 15,
-        flex: 1,
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    descripcionContainer: {
+        flex: 1,
+        flexShrink: 1
     },
     fila: {
         flexDirection: 'row',
@@ -206,10 +192,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    linea: {
+        borderBottomColor: 'black',
+        borderBottomWidth: 10,
+        marginBottom: 15,
+        marginTop: 10,
+    },
     title: {
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+        textTransform: 'capitalize'
     },
     input: {
         height: 35,
@@ -223,19 +216,24 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 18,
-        marginRight: 20,
+        marginRight: 5,
+    },
+    rawText2: {
+        fontSize: 16,
+        marginBottom: 18,
     },
     form: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
         padding: 10,
         borderRadius: 10,
-        alignItems: 'flex-end'
+        alignItems: 'flex-start',
+        marginBottom: 10
     },
     boton: {
         alignItems: 'center',
         backgroundColor: '#284B63',
         padding: 15,
-        marginTop: 20,
+        marginTop: 10,
         marginRight: 10,
         marginLeft: 10,
         borderRadius: 10,
