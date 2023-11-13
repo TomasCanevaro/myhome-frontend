@@ -14,7 +14,6 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    
     "ios": {
       "supportsTablet": true
     },
@@ -27,7 +26,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ce84628d-9f8c-47d8-a4f4-b13e4c08db87"
+      }
     }
-    
   }
 }
