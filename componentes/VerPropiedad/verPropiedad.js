@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'reac
 import { Dropdown } from 'react-native-element-dropdown';
 import * as Location from 'expo-location';
 
-export default function CrearPropiedad2({ route, navigation }) {
+export default function VerPropiedad({ route, navigation }) {
     const [calle, setCalle] = useState('');
     const [numero, setNumero] = useState('');
     const [piso, setPiso] = useState('');
@@ -28,7 +28,6 @@ export default function CrearPropiedad2({ route, navigation }) {
         latitud: null,
         longitud: null,
     });
-
     const {selectedImages} = route.params;
 
     useEffect(() => {
@@ -63,7 +62,7 @@ export default function CrearPropiedad2({ route, navigation }) {
         else {
             await geocode();
             navigation.navigate('Crear propiedad: Paso 3', {
-                selectedImages: selectedImages,
+                imagenes: selectedImages,
                 calle: calle,
                 numero: numero,
                 piso: piso,

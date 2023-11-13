@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { contactBackend } from '../../API';
 
 
 
 export default function RegisterInmobiliaria({ navigation }) {
-
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rePassword, setRePassword] = useState('');
-
     const registrarInmo = async () => {
         let data = {
             "fantasyName": nombre,
@@ -25,7 +22,6 @@ export default function RegisterInmobiliaria({ navigation }) {
                 let res = await contactBackend("/real-state-companies", false, "POST", null, data, false, 201)
                 console.log(res)
                 navigation.navigate('logearInmobiliaria')
-
             }else{
                 alert("Las contraseñas no coinciden, por favor reingréselas correctamente")
             }

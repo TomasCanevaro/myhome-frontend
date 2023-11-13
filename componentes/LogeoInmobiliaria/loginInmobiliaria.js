@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'; 
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { contactBackend } from '../../API';
 import * as SecureStore from 'expo-secure-store';
@@ -10,7 +9,6 @@ export default function LoginInmobiliaria({navigation}) {
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({}); 
     const [isFormValid, setIsFormValid] = useState(false); 
-
     const [key, onChangeKey] = useState('');
     const [value, onChangeValue] = useState('');
     const [result, onChangeResult] = useState('(result)');
@@ -18,7 +16,6 @@ export default function LoginInmobiliaria({navigation}) {
     async function save(key,value){
         await SecureStore.setItemAsync(key, value);
     }
-
 
     useEffect(() => { 
         validateForm(); 
@@ -31,17 +28,14 @@ export default function LoginInmobiliaria({navigation}) {
 
     const validateForm = () => { 
         let errors = {}; 
-        
         if (!email) { 
             errors.email = 'Ingresar correo electrónico'; 
         } else if (!/\S+@\S+\.\S+/.test(email)) { 
             errors.email = 'Correo electrónico inválido'; 
         } 
-  
         if (!password) { 
             errors.password = 'Ingresar contraseña'; 
         } 
-  
         setErrors(errors); 
         setIsFormValid(Object.keys(errors).length === 0); 
     }; 

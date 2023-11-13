@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react'; 
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 
 
 export default function MainPageInmobiliaria() {
-
     const [fantasyName, setFantasyName] = useState(''); 
-
     async function getData() {
         const userTokenKey = 'userToken'
         const fantasyNameKey = 'fantasyName'
@@ -31,13 +28,11 @@ export default function MainPageInmobiliaria() {
 }
 
 const styles = StyleSheet.create({
-
     container: {
         padding: 15,
         alignContent: 'center',
         alignItems: 'center'
     },
-
     title: {
         fontSize: 46,
         fontWeight: 'bold',

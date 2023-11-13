@@ -4,7 +4,6 @@ import PreLogin from "../LogeoInmobiliaria/preLogin";
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import MenuButtonItem from '../Reusables/MenuButtonItem';
 import MainPageInmobiliaria from '../MainInmobiliaria/mainPageInmobiliaria';
-import Card from '../Reusables/card';
 import MisPropiedades from '../MainInmobiliaria/misPropiedades';
 import CrearPropiedad from '../CrearPropiedad/crearPropiedad';
 import CrearPropiedad2 from '../CrearPropiedad/crearPropiedad2';
@@ -12,14 +11,12 @@ import CrearPropiedad3 from '../CrearPropiedad/crearPropiedad3';
 import CrearPropiedad4 from '../CrearPropiedad/crearPropiedad4';
 import CrearPropiedad5 from '../CrearPropiedad/crearPropiedad5';
 import * as SecureStore from 'expo-secure-store';
+import VerPropiedad from '../VerPropiedad/verPropiedad';
 
 const Drawer = createDrawerNavigator()
 
 export default function DrawerNavigation() {
-    
-
     return (
-
         <Drawer.Navigator
             drawerContent={(props) => <MenuItems {...props} />}
             screenOptions={{
@@ -31,7 +28,6 @@ export default function DrawerNavigation() {
                 headerStyle: {
                     backgroundColor: '#284B63'
                 }
-
             }}
         >
             <Drawer.Screen name="Inicio" component={MainPageInmobiliaria} />
@@ -41,6 +37,7 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="Crear propiedad: Paso 3" component={CrearPropiedad3} />
             <Drawer.Screen name="Crear propiedad: Paso 4" component={CrearPropiedad4} />
             <Drawer.Screen name="Crear propiedad: Paso 5" component={CrearPropiedad5} />
+            <Drawer.Screen name="Ver propiedad" component={VerPropiedad} />
             <Drawer.Screen name="Cerrar sesión" component={PreLogin} />
         </Drawer.Navigator>
     )
@@ -97,7 +94,6 @@ const MenuItems = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-
     container: {
         padding: 25,
     },

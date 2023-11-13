@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 
-export default function CrearPropiedad3({route,navigation}) {
+export default function CrearPropiedad3({ route, navigation }) {
 
     const [m2cub, setM2cub] = useState('');
     const [m2semi, setM2semi] = useState('');
@@ -11,18 +10,19 @@ export default function CrearPropiedad3({route,navigation}) {
     const [ambientes, setAmbientes] = useState('');
     const [habitaciones, setHabitaciones] = useState('');
     const [banos, setBanos] = useState('');
-    
 
-    const {calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad} = route.params;
+
+    const { selectedImages, calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad } = route.params;
 
     const handleSubmit = async () => {
-        if(m2cub==='' || m2semi === '' || m2desc === '' || ambientes === ''|| habitaciones === ''|| banos === '' ){
+        if (m2cub === '' || m2semi === '' || m2desc === '' || ambientes === '' || habitaciones === '' || banos === '') {
             Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
-              ]);
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
         }
-        else{
-            navigation.navigate('Crear propiedad: Paso 4',{
+        else {
+            navigation.navigate('Crear propiedad: Paso 4', {
+                selectedImages: selectedImages,
                 calle: calle,
                 numero: numero,
                 piso: piso,
@@ -49,24 +49,25 @@ export default function CrearPropiedad3({route,navigation}) {
             setAmbientes('');
             setHabitaciones('');
             setBanos('');
+        }
     }
-}
 
-const volverAtras = async () => {
-    navigation.navigate('Crear propiedad: Paso 2', {
-        calle: calle,
-        numero: numero,
-        piso: piso,
-        departamento: departamento,
-        localidad: localidad,
-        ciudad: ciudad,
-        provincia: provincia,
-        pais: pais,
-        latitud: latitud,
-        longitud: longitud,
-        tipoPropiedad: tipoPropiedad
-    })
-}
+    const volverAtras = async () => {
+        navigation.navigate('Crear propiedad: Paso 2', {
+            selectedImages: selectedImages,
+            calle: calle,
+            numero: numero,
+            piso: piso,
+            departamento: departamento,
+            localidad: localidad,
+            ciudad: ciudad,
+            provincia: provincia,
+            pais: pais,
+            latitud: latitud,
+            longitud: longitud,
+            tipoPropiedad: tipoPropiedad
+        })
+    }
 
     return (
         <View style={styles.container}>
@@ -100,7 +101,7 @@ const volverAtras = async () => {
 
             <Text style={styles.title}>Datos de la propiedad</Text>
             <View style={styles.form}>
-            <View style={styles.fila}>
+                <View style={styles.fila}>
                     <Text style={styles.rawText}>Años de antiguedad</Text>
                     <TextInput
                         style={styles.input}
@@ -134,18 +135,16 @@ const volverAtras = async () => {
                 </View>
             </View>
 
-        <View style={styles.fila}>
-            <TouchableOpacity style={styles.boton} title="Press me" onPress={volverAtras} >
-                <Text style={styles.textoBoton}>Volver</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
-                <Text style={styles.textoBoton}>Siguiente</Text>
-            </TouchableOpacity>
-        </View>
-
+            <View style={styles.fila}>
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={volverAtras} >
+                    <Text style={styles.textoBoton}>Volver</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
+                    <Text style={styles.textoBoton}>Siguiente</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
-
 }
 
 const styles = StyleSheet.create({
@@ -185,7 +184,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 18,
         marginRight: 20,
-        
     },
     form: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',

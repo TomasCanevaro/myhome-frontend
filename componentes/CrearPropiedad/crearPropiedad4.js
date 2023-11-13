@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
-import * as SecureStore from 'expo-secure-store';
-
-
 
 export default function CrearPropiedad4({ route, navigation }) {
-
     const [checkTerraza, setCheckTerraza] = useState(false);
     const [checkBalcon, setCheckBalcon] = useState(false);
     const [checkBaulera, setCheckBaulera] = useState(false);
@@ -35,11 +30,7 @@ export default function CrearPropiedad4({ route, navigation }) {
         { label: 'Sala de juegos', value: 'sala de juegos' },
     ];
 
-    async function save(key, value) {
-        await SecureStore.setItemAsync(key, value);
-    }
-
-    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad, m2cub, m2semi, m2desc, antiguedad, ambientes, habitaciones, banos } = route.params;
+    const {selectedImages, calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad, m2cub, m2semi, m2desc, antiguedad, ambientes, habitaciones, banos } = route.params;
 
     const handleSubmit = async () => {
         if (ubicacion === '' || orientacion === '') {
@@ -49,6 +40,7 @@ export default function CrearPropiedad4({ route, navigation }) {
         }
         else {
             navigation.navigate('Crear propiedad: Paso 5', {
+                selectedImages: selectedImages,
                 calle: calle,
                 numero: numero,
                 piso: piso,
@@ -87,6 +79,7 @@ export default function CrearPropiedad4({ route, navigation }) {
 
     const volverAtras = async () => {
         navigation.navigate('Crear propiedad: Paso 3', {
+            selectedImages: selectedImages,
             calle: calle,
             numero: numero,
             piso: piso,

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react'; 
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, Image, View, TouchableOpacity } from 'react-native';
 import Dropdown from 'react-native-input-select';
 import { RadioButton } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 
 export default function BuscarPropiedadUsuario({navigation}) {
-
     const [operacion, setOperacion] = useState('');
     const [tipoPropiedad, setTipoPropiedad] = useState('');
     const [provincia, setProvincia] = useState('');

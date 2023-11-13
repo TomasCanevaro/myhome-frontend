@@ -29,7 +29,5 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         flexDirection: 'row',
         alignItems: 'center',
-    
     }
-
 });

@@ -1,11 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, Image, View, TouchableOpacity, Alert } from 'react-native';
 import Card from '../Reusables/card';
 import React, { useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 
 export default function MisPropiedades() {
-
     const [misPropiedades, setMisPropiedades] = useState([]);
     const [token, setToken] = useState('');
     const [email, setEmail] = useState('')
@@ -13,9 +11,7 @@ export default function MisPropiedades() {
     const mostrarPropiedades = async () => {
         const endpoint = 'https://myhome-backend.vercel.app/api/v1/properties';
         const queryString = `associatedRealEstate=${encodeURIComponent(email)}`;
-
         const url = `${endpoint}?${queryString}`;
-
         const myHeaders = new Headers({
             'accept': 'application/json',
             'authorization': `${token}`,
@@ -46,95 +42,94 @@ export default function MisPropiedades() {
         } catch (error) {
             console.log(token)
             console.error('Fetch error:', error);
-            
         }
     }
 
     const handleDeleteProperty = async (propertyId) => {
         Alert.alert(
-          'Confirmar',
-          '¿Estás seguro que deseas borrar esta propiedad?',
-          [
-            {
-              text: 'Cancelar',
-              style: 'cancel',
-            },
-            {
-              text: 'Borrar',
-              onPress: async () => {
-                try {
-                  const response = await fetch(`https://myhome-backend.vercel.app/api/v1/properties/${propertyId}`, {
-                    method: 'DELETE',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `${token}`,
+            'Confirmar',
+            '¿Estás seguro que deseas borrar esta propiedad?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Borrar',
+                    onPress: async () => {
+                        try {
+                            const response = await fetch(`https://myhome-backend.vercel.app/api/v1/properties/${propertyId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `${token}`,
+                                },
+                            });
+                            if (!response.ok) {
+                                const errorMessage = await response.text();
+                                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
+                            }
+                            setMisPropiedades((prevProperties) => prevProperties.filter(property => property.id !== propertyId));
+                            console.log('Propiedad borrada correctamente');
+                            await mostrarPropiedades();
+                        } catch (error) {
+                            console.error('Error borrando propiedad:', error.message);
+                        }
                     },
-                  });
-                  
-                  if (!response.ok) {
-                    const errorMessage = await response.text();
-                    throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
-                  }
-                  
-                  setMisPropiedades((prevProperties) => prevProperties.filter(property => property.id !== propertyId));
-                  
-                  console.log('Propiedad borrada correctamente');
-                  await mostrarPropiedades();
-                } catch (error) {
-                  console.error('Error borrando propiedad:', error.message);
-                }
-              },
-            },
-          ],
-          { cancelable: false }
+                },
+            ],
+            { cancelable: false }
         );
-      };
+    };
 
     useEffect(() => {
         const fetchData = async () => {
-          try {
-            const userTokenKey = 'userToken';
-            const userEmailKey = 'userMail';
-    
-            const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
-            const storedEmailKey = await SecureStore.getItemAsync(userEmailKey);
-    
-            if (storedTokenKey) {
-              setToken(storedTokenKey);
+            try {
+                const userTokenKey = 'userToken';
+                const userEmailKey = 'userMail';
+                const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
+                const storedEmailKey = await SecureStore.getItemAsync(userEmailKey);
+                if (storedTokenKey) {
+                    setToken(storedTokenKey);
+                }
+                if (storedEmailKey) {
+                    setEmail(storedEmailKey);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
-    
-            if (storedEmailKey) {
-              setEmail(storedEmailKey);
-            }
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
         };
-    
         fetchData();
-      }, []); 
-    
-      useEffect(() => {
+    }, []);
+
+    useEffect(() => {
         const fetchPropiedades = async () => {
-          if (token && email) {
-            await mostrarPropiedades();
-          }
-        };
-    
+            if (token && email) {
+                await mostrarPropiedades();
+            }
+        }
         fetchPropiedades();
-      }, [token,email]);
+    }, [token, email]);
 
     return (
         <View style={styles.container}>
             {misPropiedades.map((property, index) => (
-                <Card key = {index}>
+                <Card key={index}>
                     <View style={styles.columna}>
-                        <TouchableOpacity>
-                        <Image
-                            style={styles.icono}
-                            source={require('../../assets/casa.png')}
-                        />
-                        </TouchableOpacity>
+                        {property.propertyType === 'casa' ? (
+                            <TouchableOpacity>
+                                <Image
+                                    style={styles.icono}
+                                    source={require('../../assets/casa.png')}
+                                />
+                            </TouchableOpacity>) : (
+                            <TouchableOpacity>
+                                <Image
+                                    style={styles.iconoEdificio}
+                                    source={require('../../assets/edificio.png')}
+                                />
+                            </TouchableOpacity>
+                        )}
                     </View>
                     <View style={styles.columna2}>
                         <TouchableOpacity>
@@ -145,6 +140,7 @@ export default function MisPropiedades() {
                         <Text style={styles.rawText}>${property.price}</Text>
                         <Text style={styles.rawText}>{property.rooms} amb.</Text>
                         <Text style={styles.rawText}>{property.address.district}</Text>
+
                         <View style={styles.columna4}>
                             <TouchableOpacity>
                                 <Image
@@ -167,7 +163,6 @@ export default function MisPropiedades() {
 }
 
 const styles = StyleSheet.create({
-
     container: {
         padding: 15,
     },
@@ -207,11 +202,15 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
     },
+    iconoEdificio: {
+        width: 50,
+        height: 60,
+    },
     clickableIcon: {
         width: 35,
         height: 35,
         marginStart: 10
     },
-    
+
 
 })

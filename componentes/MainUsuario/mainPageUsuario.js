@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react'; 
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import Card from '../Reusables/card';
 
 export default function MainPageUsuario({navigation}) { 
-
     return (
         <View style={styles.container}>
             <Text style={styles.textoh1}>Propiedades cercanas</Text>
             <View style={styles.container}>
                 <Card>
-                    
                     <View style={styles.columna}>
                         <Image
                             style={styles.icono}
