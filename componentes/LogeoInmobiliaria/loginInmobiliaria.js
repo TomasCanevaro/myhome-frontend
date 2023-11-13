@@ -17,8 +17,8 @@ export default function LoginInmobiliaria({navigation}) {
 
     async function save(key,value){
         await SecureStore.setItemAsync(key, value);
-
     }
+
 
     useEffect(() => { 
         validateForm(); 
@@ -57,6 +57,7 @@ export default function LoginInmobiliaria({navigation}) {
                 console.log(res)
                 save('userToken',res.bearerToken)
                 save('fantasyName',res.user.fantasyName)
+                save('userMail',res.user.email)
                 navigation.navigate('mainPageInmobiliaria')
 
             }else{

@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
+import * as SecureStore from 'expo-secure-store';
 
 
 
-export default function CrearPropiedad4({ navigation }) {
+export default function CrearPropiedad4({ route, navigation }) {
 
-    const [checkTerraza, setCheckTerraza] = useState('');
-    const [checkBalcon, setCheckBalcon] = useState('');
-    const [checkGarage, setCheckGarage] = useState('');
-    const [checkBaulera, setCheckBaulera] = useState('');
+    const [checkTerraza, setCheckTerraza] = useState(false);
+    const [checkBalcon, setCheckBalcon] = useState(false);
+    const [checkBaulera, setCheckBaulera] = useState(false);
+    const [garage, setGarage] = useState('');
     const [ubicacion, setUbicacion] = useState('');
     const [orientacion, setOrientacion] = useState('');
     const [amenities, setAmenities] = useState('');
@@ -20,7 +21,7 @@ export default function CrearPropiedad4({ navigation }) {
         { label: 'Contrafrente', value: 'contrafrente' },
     ];
     const dataOrientacion = [
-        { label: 'Norte', value: 'frente' },
+        { label: 'Norte', value: 'norte' },
         { label: 'Sur', value: 'sur' },
         { label: 'Este', value: 'este' },
         { label: 'Oeste', value: 'oeste' },
@@ -30,9 +31,81 @@ export default function CrearPropiedad4({ navigation }) {
         { label: 'Pileta', value: 'pileta' },
         { label: 'Jacuzzi', value: 'jacuzzi' },
         { label: 'Sauna', value: 'sauna' },
-        { label: 'SUM', value: 'sum' },
-        { label: 'Sala de juegos', value: 'juegos' },
+        { label: 'SUM', value: 'SUM' },
+        { label: 'Sala de juegos', value: 'sala de juegos' },
     ];
+
+    async function save(key, value) {
+        await SecureStore.setItemAsync(key, value);
+    }
+
+    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad, m2cub, m2semi, m2desc, antiguedad, ambientes, habitaciones, banos } = route.params;
+
+    const handleSubmit = async () => {
+        if (ubicacion === '' || orientacion === '') {
+            Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        }
+        else {
+            navigation.navigate('Crear propiedad: Paso 5', {
+                calle: calle,
+                numero: numero,
+                piso: piso,
+                departamento: departamento,
+                localidad: localidad,
+                ciudad: ciudad,
+                provincia: provincia,
+                pais: pais,
+                latitud: latitud,
+                longitud: longitud,
+                tipoPropiedad: tipoPropiedad,
+                m2cub: m2cub,
+                m2semi: m2semi,
+                m2desc: m2desc,
+                antiguedad: antiguedad,
+                ambientes: ambientes,
+                habitaciones: habitaciones,
+                banos: banos,
+                terraza: checkTerraza,
+                balcon: checkBalcon,
+                baulera: checkBaulera,
+                garage: garage,
+                ubicacion: ubicacion,
+                orientacion: orientacion,
+                amenities: amenities
+            })
+            setCheckTerraza(false);
+            setCheckBalcon(false);
+            setCheckBaulera(false);
+            setGarage('')
+            setUbicacion('');
+            setOrientacion('');
+            setAmenities('');
+        }
+    }
+
+    const volverAtras = async () => {
+        navigation.navigate('Crear propiedad: Paso 3', {
+            calle: calle,
+            numero: numero,
+            piso: piso,
+            departamento: departamento,
+            localidad: localidad,
+            ciudad: ciudad,
+            provincia: provincia,
+            pais: pais,
+            latitud: latitud,
+            longitud: longitud,
+            tipoPropiedad: tipoPropiedad,
+            m2cub: m2cub,
+            m2semi: m2semi,
+            m2desc: m2desc,
+            ambientes: ambientes,
+            habitaciones: habitaciones,
+            banos: banos,
+        })
+    }
 
     return (
         <View style={styles.container}>
@@ -53,20 +126,23 @@ export default function CrearPropiedad4({ navigation }) {
                         onValueChange={setCheckBalcon} />
                 </View>
                 <View style={styles.fila}>
-                    <Text style={styles.checkText}>Garage</Text>
-                    <Checkbox
-                        style={styles.checkbox}
-                        value={checkGarage}
-                        onValueChange={setCheckGarage} />
-                </View>
-                <View style={styles.fila}>
                     <Text style={styles.checkText}>Baulera</Text>
                     <Checkbox
                         style={styles.checkbox}
                         value={checkBaulera}
                         onValueChange={setCheckBaulera} />
                 </View>
+                <View style={styles.fila}>
+                    <Text style={styles.garageText}>Garage (cantidad)</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={garage}
+                        onChangeText={setGarage}
+                        inputMode='numeric'
+                        required />
+                </View>
             </View>
+            
 
             <View style={styles.form2}>
                 <Text style={styles.rawText}>Ubicacion</Text>
@@ -101,26 +177,27 @@ export default function CrearPropiedad4({ navigation }) {
                         setOrientacion(item.value);
                     }}
                 />
-                    <Text style={styles.rawText}>Amenities</Text>
-                    <MultiSelect
-                        style={styles.dropdown}
-                        placeholder=''
-                        iconStyle={styles.iconStyle}
-                        data={dataAmenities}
-                        labelField="label"
-                        valueField="value"
-                        value={amenities}
-                        onChange={item => {
-                            setAmenities(item);
-                        }}
-                    />
+                <Text style={styles.rawText}>Amenities</Text>
+                <MultiSelect
+                    style={styles.dropdown}
+                    placeholder=''
+                    iconStyle={styles.iconStyle}
+                    data={dataAmenities}
+                    labelField="label"
+                    valueField="value"
+                    value={amenities}
+                    selectedStyle={styles.selectedStyle}
+                    onChange={item => {
+                        setAmenities(item);
+                    }}
+                />
             </View>
 
             <View style={styles.fila}>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 3')} >
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={volverAtras} >
                     <Text style={styles.textoBoton}>Volver</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 5')} >
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
                     <Text style={styles.textoBoton}>Siguiente</Text>
                 </TouchableOpacity>
             </View>
@@ -154,7 +231,7 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 35,
-        width: 150,
+        width: 50,
         backgroundColor: 'rgba(256, 256, 256, 0.6)',
         marginBottom: 15,
         padding: 10,
@@ -163,6 +240,12 @@ const styles = StyleSheet.create({
     rawText: {
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    garageText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 18,
+        marginRight: 20,
     },
     checkText: {
         fontSize: 16,
@@ -248,4 +331,24 @@ const styles = StyleSheet.create({
         width: 50,
         fontSize: 16,
     },
+    selectedStyle: {
+        flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 14,
+      backgroundColor: 'white',
+      shadowColor: '#000',
+      marginTop: 8,
+      marginRight: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.2,
+      shadowRadius: 1.41,
+
+      elevation: 2
+      },
 });

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
+import * as SecureStore from 'expo-secure-store';
+import { contactBackend } from '../../API';
 
 
-
-export default function CrearPropiedad5({ navigation }) {
+export default function CrearPropiedad5({ route, navigation }) {
 
     const [descripcion, setDescripcion] = useState('');
     const [estado, setEstado] = useState('');
@@ -14,14 +15,161 @@ export default function CrearPropiedad5({ navigation }) {
     const [cambio, setCambio] = useState('');
     const [expensas, setExpensas] = useState('');
     const dataEstado = [
-        { label: 'En alquiler', value: 'alquiler' },
-        { label: 'En venta', value: 'venta' },
+        { label: 'En alquiler', value: 'en alquiler' },
+        { label: 'En venta', value: 'en venta' },
     ];
     const dataCambio = [
-        { label: 'Pesos', value: 'pesos' },
-        { label: 'Dólares', value: 'dolares' },
+        { label: 'Pesos', value: 'ars' },
+        { label: 'Dólares', value: 'usd' },
     ];
-    
+
+    async function save(key, value) {
+        await SecureStore.setItemAsync(key, value);
+    }
+
+    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad,
+        m2cub, m2semi, m2desc, antiguedad, ambientes, habitaciones, banos,
+        terraza, balcon, garage, baulera, ubicacion, orientacion, amenities } = route.params;
+
+    const [token, setToken] = useState('');
+    const [email, setEmail] = useState('')
+
+    async function getData() {
+        const userTokenKey = 'userToken'
+        const userEmailKey = 'userMail'
+        const storedTokenKey = await SecureStore.getItemAsync(userTokenKey)
+        const storedEmailKey = await SecureStore.getItemAsync(userEmailKey)
+        if (storedTokenKey) {
+            setToken(storedTokenKey)
+        }
+        if (storedEmailKey) {
+            setEmail(storedEmailKey)
+        }
+    }
+    useEffect(
+        React.useCallback(() => {
+            getData();
+        }, [])
+    );
+
+
+
+    const handleSubmit = async () => {
+        if (descripcion === '' || estado === '' || precio === '' || cambio === '' || expensas === '') {
+            Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        }
+        else {
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("accept", "application/json");
+            myHeaders.append("authorization", token);
+
+            var raw = JSON.stringify({
+                "currency": cambio,
+                "description": descripcion,
+                "associatedRealEstate": email,
+                "address": {
+                    "street": calle,
+                    "number": numero,
+                    "floor": piso,
+                    "department": departamento,
+                    "district": localidad,
+                    "town": ciudad,
+                    "province": provincia,
+                    "country": pais
+                },
+                "geolocation": {
+                    "latitude": latitud,
+                    "longitude": longitud
+                  },
+                "rooms": ambientes,
+                "bedrooms": habitaciones,
+                "bathrooms": banos,
+                "hasTerrace": terraza,
+                "hasBalcony": balcon,
+                "garage": garage,
+                "hasStorageRoom": baulera,
+                "age": antiguedad,
+                "propertyType": tipoPropiedad,
+                "squareMeters": {
+                    "covered": m2cub,
+                    "semiCovered": m2semi,
+                    "uncovered": m2desc
+                },
+                "frontOrBack": ubicacion,
+                "orientation": orientacion,
+                "amenities": amenities,
+                "price": precio,
+                "expensesPrice": expensas,
+                "status": estado
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+
+            fetch("https://myhome-backend.vercel.app/api/v1/properties", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        Alert.alert('Éxito', 'La propiedad fue creada con éxito', [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                        navigation.navigate('Inicio');
+                        setDescripcion('');
+                        setEstado('');
+                        setPrecio('');
+                        setCambio('');
+                        setExpensas('');
+                    }else {
+                        console.log('Error de backend:', result);
+                        console.log(result.success);
+                        console.log(result.message);
+                        Alert.alert('Error', result.message, [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(error => console.log('error', error));
+
+        }
+    }
+
+    const volverAtras = async () => {
+        navigation.navigate('Crear propiedad: Paso 4', {
+            calle: calle,
+            numero: numero,
+            piso: piso,
+            departamento: departamento,
+            localidad: localidad,
+            ciudad: ciudad,
+            provincia: provincia,
+            pais: pais,
+            latitud: latitud,
+            longitud: longitud,
+            tipoPropiedad: tipoPropiedad,
+            m2cub: m2cub,
+            m2semi: m2semi,
+            m2desc: m2desc,
+            ambientes: ambientes,
+            habitaciones: habitaciones,
+            banos: banos,
+            terraza: terraza,
+            balcon: balcon,
+            garage: garage,
+            baulera: baulera,
+            ubicacion: ubicacion,
+            orientacion: orientacion,
+            amenities: amenities
+        })
+    }
+
 
     return (
         <View style={styles.container}>
@@ -70,7 +218,7 @@ export default function CrearPropiedad5({ navigation }) {
                         onChange={item => {
                             setCambio(item.value);
                         }}
-                    />   
+                    />
                 </View>
                 <Text style={styles.checkText}>Expensas</Text>
                 <View style={styles.fila}>
@@ -93,16 +241,16 @@ export default function CrearPropiedad5({ navigation }) {
                         onChange={item => {
                             setCambio(item.value);
                         }}
-                    />   
+                    />
                 </View>
             </View>
 
             <View style={styles.fila}>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 4')} >
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={volverAtras} >
                     <Text style={styles.textoBoton}>Volver</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => console.log('asd')} >
-                    <Text style={styles.textoBoton}>Siguiente</Text>
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
+                    <Text style={styles.textoBoton}>Crear propiedad</Text>
                 </TouchableOpacity>
             </View>
 
