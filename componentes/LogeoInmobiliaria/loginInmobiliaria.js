@@ -47,7 +47,7 @@ export default function LoginInmobiliaria({navigation}) {
         };
         try {
             if (isFormValid) {
-                let res = await contactBackend("/auths", false, "POST", null, data, true, 200)
+                let res = await contactBackend("/auths", false, "POST", null, data, false, 200)
                 console.log(res)
                 save('userToken',res.bearerToken)
                 save('fantasyName',res.user.fantasyName)
@@ -55,14 +55,13 @@ export default function LoginInmobiliaria({navigation}) {
                 navigation.navigate('mainPageInmobiliaria')
 
             }else{
-                Alert.alert('Error al logear', res.message, [
+                Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
                     {text: 'OK', onPress: () => console.log('OK Pressed')},
                   ]);
             }
         } catch (e) {
-            Alert.alert('Error al logear', e, [
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
-              ]);
+            console.log(e)
+            Alerta()
         }
     }
 
