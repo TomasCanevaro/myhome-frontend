@@ -1,10 +1,7 @@
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 
 export default function UsuarioComunElegirCuenta({ navigation }) {
-
-
   return (
     <View style={styles.container}>
       <View style={styles.form}>

@@ -1,10 +1,7 @@
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 
 export default function UsuarioComunAcceder({ navigation }) {
-
-
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('usuarioComunElegirCuenta')} >

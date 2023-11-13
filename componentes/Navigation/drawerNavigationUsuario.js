@@ -12,7 +12,6 @@ const Drawer = createDrawerNavigator()
 
 export default function DrawerNavigationUsuario() {
     return (
-
         <Drawer.Navigator
             drawerContent={(props) => <MenuItems {...props} />}
             screenOptions={{
@@ -24,7 +23,6 @@ export default function DrawerNavigationUsuario() {
                 headerStyle: {
                     backgroundColor: '#284B63'
                 }
-
             }}
         >
             <Drawer.Screen name="Inicio" component={MainPageUsuario} />
@@ -36,14 +34,12 @@ export default function DrawerNavigationUsuario() {
 }
 
 const MenuItems = ({ navigation }) => {
-
     return (
         <DrawerContentScrollView
             style={styles.container}
         >
             <Text style={styles.title}>Juan Gomez</Text>
             <View style={styles.linea} />
-
             <MenuButtonItem
                 text='Inicio'
                 onPress={() => navigation.navigate('Inicio')}
@@ -65,11 +61,9 @@ const MenuItems = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-
     container: {
         padding: 25,
     },
-
     title: {
         fontSize: 30,
         fontWeight: 'bold',

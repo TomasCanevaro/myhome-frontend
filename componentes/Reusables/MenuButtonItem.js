@@ -6,9 +6,7 @@ const MenuButtonItem = ({text, onPress}) => {
     return(
         <TouchableOpacity
         style = {styles.buttonContainer}
-            onPress = {onPress}
-
-        >
+            onPress = {onPress}>
             <Text style = {styles.buttonText}>{text}</Text>
         </TouchableOpacity>
     )
@@ -25,7 +23,6 @@ const styles = StyleSheet.create({
         color: '#6e6e6e',
         fontWeight: 'bold'
     }
-
 })
 
 export default MenuButtonItem

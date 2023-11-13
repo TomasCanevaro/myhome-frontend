@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'; 
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import Card from '../Reusables/card';
 
 export default function FavoritosUsuario({navigation}) { 
-
     return (
         <View style={styles.container}>
             <View style={styles.container}>

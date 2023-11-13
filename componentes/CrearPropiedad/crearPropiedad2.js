@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
-import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
-
+import { Dropdown } from 'react-native-element-dropdown';
 import * as Location from 'expo-location';
 
-
-
 export default function CrearPropiedad2({ route, navigation }) {
-
     const [calle, setCalle] = useState('');
     const [numero, setNumero] = useState('');
     const [piso, setPiso] = useState('');
@@ -30,37 +24,40 @@ export default function CrearPropiedad2({ route, navigation }) {
         { label: 'Galpon', value: 'galpon' },
         { label: 'Terreno', value: 'terreno' },
     ];
-    const [location, setLocation] = useState({
-        latitud: null,
-        longitud: null,
-    });
+
+    const { selectedImages } = route.params;
 
     useEffect(() => {
-        // This will run every time location changes
-        console.log('Location updated:', location);
-        setLatitud(location.latitud)
-        setLongitud(location.longitud)
-    }, [location]);
+        console.log('Location updated:');
+        console.log('Latitud:', latitud)
+        console.log('Longitud:', longitud)
+    }, [latitud, longitud]);
 
-    async function save(key, value) {
-        await SecureStore.setItemAsync(key, value);
-    }
     const geocode = async () => {
-        Location.requestForegroundPermissionsAsync();
-        const address = `${calle} ${numero}, ${localidad}`
-        const geocodedLocation = await Location.geocodeAsync(address);
-        const firstResult = geocodedLocation[0]
-        if (firstResult) {
-            console.log('Geocoding result:', firstResult);
-            setLocation({
-                latitud: firstResult.latitude,
-                longitud: firstResult.longitude
-            })
-        } else {
-            console.log('Geocoding result is empty')
+        try {
+            Location.requestForegroundPermissionsAsync();
+            const address = `${calle} ${numero}, ${localidad}`;
+            const geocodedLocation = await Location.geocodeAsync(address);
+            const firstResult = geocodedLocation[0];
+            
+            if (firstResult) {
+                console.log('Geocoding result:', firstResult);
+                setLatitud(firstResult.latitude);
+                setLongitud(firstResult.longitude);
+                
+                return {
+                    latitud: firstResult.latitude,
+                    longitud: firstResult.longitude,
+                };
+            } else {
+                console.log('Geocoding result is empty');
+                return {};
+            }
+        } catch (error) {
+            console.error('Error en geocode:', error);
+            throw error; 
         }
-        console.log("Geocoded Address")
-    }
+    };
 
     const handleSubmit = async () => {
         if (calle === '' || numero === '' || localidad === '' || ciudad === '' || provincia === '' || pais === '') {
@@ -69,44 +66,41 @@ export default function CrearPropiedad2({ route, navigation }) {
             ]);
         }
         else {
-            await geocode();
+            geocode()
+                .then(({ latitud, longitud }) => {
+                    console.log("aaaaaaaaaaaaaaaa");
+                    console.log(latitud);
+                    console.log(longitud);
+                    navigation.navigate('Crear propiedad: Paso 3', {
+                        selectedImages: selectedImages,
+                        calle: calle,
+                        numero: numero,
+                        piso: piso,
+                        departamento: departamento,
+                        localidad: localidad,
+                        ciudad: ciudad,
+                        provincia: provincia,
+                        pais: pais,
+                        latitud: latitud,
+                        longitud: longitud,
+                        tipoPropiedad: tipoPropiedad,
+                    });
 
-            if (piso === '' && departamento === '') {
-                save('tipoPropiedad', 'casa')
-            } else {
-                save('tipoPropiedad', 'departamento')
-            }
-
-            navigation.navigate('Crear propiedad: Paso 3', {
-                calle: calle,
-                numero: numero,
-                piso: piso,
-                departamento: departamento,
-                localidad: localidad,
-                ciudad: ciudad,
-                provincia: provincia,
-                pais: pais,
-                latitud: latitud,
-                longitud: longitud,
-                tipoPropiedad: tipoPropiedad,
-            });
-            setCalle('');
-            setNumero('');
-            setPiso('');
-            setDepartamento('');
-            setLocalidad('');
-            setCiudad('');
-            setProvincia('');
-            setPais('');
-            setLatitud('');
-            setLongitud('');
-            setTipoPropiedad('')
-
+                    setCalle('');
+                    setNumero('');
+                    setPiso('');
+                    setDepartamento('');
+                    setLocalidad('');
+                    setCiudad('');
+                    setProvincia('');
+                    setPais('');
+                    setTipoPropiedad('');
+                })
+                .catch(error => {
+                    console.error('Error en geocode:', error);
+                });
         }
-
-    }
-
-
+    };
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Complete la dirección</Text>
@@ -202,10 +196,8 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.textoBoton}>Siguiente</Text>
                 </TouchableOpacity>
             </View>
-
         </View>
     );
-
 }
 
 const styles = StyleSheet.create({
@@ -215,7 +207,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
         marginVertical: 50,
         padding: 15,
-        flex: 1,
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center'
@@ -244,7 +235,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 18,
         marginRight: 20,
-
     },
     form: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',

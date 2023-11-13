@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
-import Checkbox from 'expo-checkbox';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import * as SecureStore from 'expo-secure-store';
-import { contactBackend } from '../../API';
+
 
 
 export default function CrearPropiedad5({ route, navigation }) {
-
     const [descripcion, setDescripcion] = useState('');
     const [estado, setEstado] = useState('');
     const [precio, setPrecio] = useState('');
@@ -27,10 +24,9 @@ export default function CrearPropiedad5({ route, navigation }) {
         await SecureStore.setItemAsync(key, value);
     }
 
-    const { calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad,
+    const { selectedImages, calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad,
         m2cub, m2semi, m2desc, antiguedad, ambientes, habitaciones, banos,
         terraza, balcon, garage, baulera, ubicacion, orientacion, amenities } = route.params;
-
     const [token, setToken] = useState('');
     const [email, setEmail] = useState('')
 
@@ -52,8 +48,6 @@ export default function CrearPropiedad5({ route, navigation }) {
         }, [])
     );
 
-
-
     const handleSubmit = async () => {
         if (descripcion === '' || estado === '' || precio === '' || cambio === '' || expensas === '') {
             Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
@@ -65,7 +59,6 @@ export default function CrearPropiedad5({ route, navigation }) {
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("accept", "application/json");
             myHeaders.append("authorization", token);
-
             var raw = JSON.stringify({
                 "currency": cambio,
                 "description": descripcion,
@@ -83,7 +76,7 @@ export default function CrearPropiedad5({ route, navigation }) {
                 "geolocation": {
                     "latitude": latitud,
                     "longitude": longitud
-                  },
+                },
                 "rooms": ambientes,
                 "bedrooms": habitaciones,
                 "bathrooms": banos,
@@ -101,19 +94,17 @@ export default function CrearPropiedad5({ route, navigation }) {
                 "frontOrBack": ubicacion,
                 "orientation": orientacion,
                 "amenities": amenities,
+                "photos": selectedImages,
                 "price": precio,
                 "expensesPrice": expensas,
                 "status": estado
             });
-
             var requestOptions = {
                 method: 'POST',
                 headers: myHeaders,
                 body: raw,
                 redirect: 'follow'
             };
-
-
             fetch("https://myhome-backend.vercel.app/api/v1/properties", requestOptions)
                 .then(response => response.json())
                 .then(result => {
@@ -121,13 +112,14 @@ export default function CrearPropiedad5({ route, navigation }) {
                         Alert.alert('Éxito', 'La propiedad fue creada con éxito', [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
+                        console.log(result)
                         navigation.navigate('Inicio');
                         setDescripcion('');
                         setEstado('');
                         setPrecio('');
                         setCambio('');
                         setExpensas('');
-                    }else {
+                    } else {
                         console.log('Error de backend:', result);
                         console.log(result.success);
                         console.log(result.message);
@@ -137,12 +129,12 @@ export default function CrearPropiedad5({ route, navigation }) {
                     }
                 })
                 .catch(error => console.log('error', error));
-
         }
     }
 
     const volverAtras = async () => {
         navigation.navigate('Crear propiedad: Paso 4', {
+            selectedImages: selectedImages,
             calle: calle,
             numero: numero,
             piso: piso,
@@ -170,11 +162,9 @@ export default function CrearPropiedad5({ route, navigation }) {
         })
     }
 
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>¡Último paso!</Text>
-
             <View style={styles.form2}>
                 <Text style={styles.rawText}>Descripcion</Text>
                 <TextInput
@@ -331,7 +321,6 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         alignItems: 'flex-end',
-
     },
     form2: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -366,7 +355,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
-
         elevation: 2,
     },
     dropdownPrecio: {
@@ -383,7 +371,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
-
         elevation: 2,
     },
     icon: {
