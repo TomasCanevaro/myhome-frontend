@@ -55,7 +55,7 @@ export default function LoginInmobiliaria({navigation}) {
                 navigation.navigate('mainPageInmobiliaria')
 
             }else{
-                Alert.alert('Error al logear', res.message, [
+                Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
                     {text: 'OK', onPress: () => console.log('OK Pressed')},
                   ]);
             }

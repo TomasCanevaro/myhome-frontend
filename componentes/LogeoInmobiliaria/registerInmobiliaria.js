@@ -19,7 +19,7 @@ export default function RegisterInmobiliaria({ navigation }) {
         };
         try {
             if (password == rePassword) {
-                let res = await contactBackend("/real-state-companies", false, "POST", null, data, false, 201)
+                let res = await contactBackend("/real-state-companies", false, "POST", null, data, true, 201)
                 console.log(res)
                 navigation.navigate('logearInmobiliaria')
             }else{

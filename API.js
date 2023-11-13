@@ -1,6 +1,6 @@
 const backendURL = "myhome-backend.vercel.app/api/v1/"
 
-export async function contactBackend(endpoint, accessRequired = false, method = "GET", queryParams = null, body = null, secure = false, expectedResponseCode = 200, token = null) {
+export async function contactBackend(endpoint, accessRequired = false, method = "GET", queryParams = null, body = null, secure = true, expectedResponseCode = 200, token = null) {
 
     try {
         let urlString = (secure ? "https://" : "http://") +
