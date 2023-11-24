@@ -1,8 +1,130 @@
 import React, { useState, useEffect } from 'react'; 
-import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, Image, View, TouchableOpacity, Alert } from 'react-native';
 import Card from '../Reusables/card';
+import { useFocusEffect } from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
 
 export default function FavoritosUsuario({navigation}) { 
+    const [misFavoritos, setMisFavoritos] = useState([]);
+    const [token, setToken] = useState('');
+
+    const mostrarPropiedades = async () => {
+        const endpoint = 'https://myhome-backend.vercel.app/api/v1/users/properties';
+        const url = `${endpoint}`;
+        const myHeaders = new Headers({
+            'accept': 'application/json',
+            'authorization': `${token}`,
+        });
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: myHeaders,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const result = await response.json();
+            if (result.success) {
+                console.log(result);
+                console.log(url)
+                setMisFavoritos(result.properties);
+            } else {
+                console.log('Error de backend:', result);
+                console.log(result.success);
+                console.log(result.message);
+                Alert.alert('Error', 'Hubo un error al mostrar las propiedades, por favor intente nuevamente', [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ]);
+            }
+        } catch (error) {
+            console.log(token)
+            console.error('Fetch error:', error);
+        }
+    }
+
+    const proximamente = async => {
+        Alert.alert('Próximamente', 'Todavía no es posible editar propiedades', [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+    }
+
+    const handleDeleteProperty = async (propertyId) => {
+        Alert.alert(
+            'Confirmar',
+            '¿Estás seguro que deseas borrar esta propiedad?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Borrar',
+                    onPress: async () => {
+                        try {
+                            const response = await fetch(`https://myhome-backend.vercel.app/api/v1/users/properties/${propertyId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `${token}`,
+                                },
+                            });
+                            if (!response.ok) {
+                                const errorMessage = await response.text();
+                                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
+                            }
+                            setMisFavoritos((prevFavoritos) => prevFavoritos.filter(property => property.id !== propertyId));
+                            console.log('Propiedad borrada correctamente');
+
+                            if (misFavoritos.length > 1) {
+                                await mostrarPropiedades();
+                            } else {
+                                setMisFavoritos([]);
+                            }
+                        } catch (error) {
+                            console.error('Error borrando propiedad:', error.message);
+                        }
+                    },
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
+    /*
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userTokenKey = 'userToken';
+                const userEmailKey = 'userMail';
+                const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
+                const storedEmailKey = await SecureStore.getItemAsync(userEmailKey);
+                if (storedTokenKey) {
+                    setToken(storedTokenKey);
+                }
+                if (storedEmailKey) {
+                    setEmail(storedEmailKey);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchPropiedades = async () => {
+                if (token && email) {
+                    await mostrarPropiedades();
+                }
+            };
+            fetchPropiedades();
+        }, [token, email])
+    );
+    */
+
     return (
         <View style={styles.container}>
             <View style={styles.container}>

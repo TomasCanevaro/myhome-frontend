@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DrawerContentScrollView, createDrawerNavigator } from "@react-navigation/drawer";
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import MenuButtonItem from '../Reusables/MenuButtonItem';
@@ -6,7 +6,9 @@ import MainPageUsuario from '../MainUsuario/mainPageUsuario';
 import FavoritosUsuario from '../MainUsuario/favoritosUsuario';
 import BuscarPropiedadUsuario from '../MainUsuario/buscarPropiedadUsuario';
 import UsuarioComunAcceder from '../LogeoUsuario/UsuarioComunAcceder';
-
+import VerPropiedad from '../VerPropiedad/verPropiedadUsuario';
+import Perfil from '../MainUsuario/perfilUsuario'
+import * as SecureStore from 'expo-secure-store';
 
 const Drawer = createDrawerNavigator()
 
@@ -28,21 +30,44 @@ export default function DrawerNavigationUsuario() {
             <Drawer.Screen name="Inicio" component={MainPageUsuario} />
             <Drawer.Screen name="Buscar propiedad" component={BuscarPropiedadUsuario} />
             <Drawer.Screen name="Mis Favoritos" component={FavoritosUsuario} />
+            <Drawer.Screen name="Ver propiedad" component={VerPropiedad} />
+            <Drawer.Screen name="Perfil" component={Perfil} />
             <Drawer.Screen name="Cerrar sesión" component={UsuarioComunAcceder} />
         </Drawer.Navigator>
     )
 }
 
 const MenuItems = ({ navigation }) => {
+    const [fantasyName, setFantasyName] = useState(''); 
+
+    async function getData() {
+        const userTokenKey = 'userToken'
+        const fantasyNameKey = 'fantasyName'
+        const storedFantasyName = await SecureStore.getItemAsync(fantasyNameKey)
+        if (storedFantasyName){
+            setFantasyName(storedFantasyName)
+        }
+    }
+    useEffect(
+        React.useCallback(() => {
+          getData();
+        }, [])
+      );
+
     return (
         <DrawerContentScrollView
             style={styles.container}
         >
-            <Text style={styles.title}>Juan Gomez</Text>
+            <Text style={styles.title}>{fantasyName}</Text>
+            <Text style={styles.subtitle}>Usuario</Text>
             <View style={styles.linea} />
             <MenuButtonItem
                 text='Inicio'
                 onPress={() => navigation.navigate('Inicio')}
+            />
+            <MenuButtonItem
+                text='Perfil'
+                onPress={() => navigation.navigate('Perfil')}
             />
             <MenuButtonItem
                 text='Buscar propiedad'
