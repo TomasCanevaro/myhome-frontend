@@ -5,6 +5,7 @@ import MenuButtonItem from '../Reusables/MenuButtonItem';
 import MainPageUsuario from '../MainUsuario/mainPageUsuario';
 import FavoritosUsuario from '../MainUsuario/favoritosUsuario';
 import BuscarPropiedadUsuario from '../MainUsuario/buscarPropiedadUsuario';
+import ResultadosBusquedaUsuario from '../MainUsuario/resultadosBusquedaUsuario';
 import UsuarioComunAcceder from '../LogeoUsuario/UsuarioComunAcceder';
 import VerPropiedad from '../VerPropiedad/verPropiedadUsuario';
 import Perfil from '../MainUsuario/perfilUsuario'
@@ -31,6 +32,7 @@ export default function DrawerNavigationUsuario() {
             <Drawer.Screen name="Buscar propiedad" component={BuscarPropiedadUsuario} />
             <Drawer.Screen name="Mis Favoritos" component={FavoritosUsuario} />
             <Drawer.Screen name="Ver propiedad" component={VerPropiedad} />
+            <Drawer.Screen name="Resultados Busqueda" component={ResultadosBusquedaUsuario} />
             <Drawer.Screen name="Perfil" component={Perfil} />
             <Drawer.Screen name="Cerrar sesión" component={UsuarioComunAcceder} />
         </Drawer.Navigator>

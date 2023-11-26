@@ -75,6 +75,38 @@ export default function BuscarPropiedadUsuario({navigation}) {
         { label: 'Sala de juegos', value: 'sala de juegos' },
     ];
 
+    const handleSubmit = async () => {
+        navigation.navigate('Resultados Busqueda', {
+            operacion: operacion,
+            tipoPropiedad: tipoPropiedad,
+            provincia: provincia,
+            localidad: localidad,
+            barrio: barrio,
+            cambio: cambio,
+            desde: desde,
+            hasta: hasta,
+            ambientes: ambientes,
+            dormitorios: dormitorios,
+            baños: baños,
+            antiguedad: antiguedad,
+            amenities: amenities
+        });
+
+        setOperacion('');
+        setTipoPropiedad('');
+        setProvincia('');
+        setLocalidad('');
+        setBarrio('');
+        setCambio('');
+        setDesde('');
+        setHasta('');
+        setAmbientes('');
+        setDormitorios('');
+        setBaños('');
+        setAntiguedad('');
+        setAmenities('');
+    }
+
     return (
         <View style={styles.container}>
         <ScrollView>
@@ -287,7 +319,7 @@ export default function BuscarPropiedadUsuario({navigation}) {
             </View>
 
             <View style={styles.fila}>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => console.log('buscar')} >
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
                     <Text style={styles.textoBoton}>Buscar</Text>
                 </TouchableOpacity>
             </View>
