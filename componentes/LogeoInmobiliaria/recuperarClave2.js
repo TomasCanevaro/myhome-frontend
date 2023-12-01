@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert} from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 
-export default function RecuperarClave({ navigation }) {
-    const [email, setEmail] = useState('');
+export default function RecuperarClave2({ navigation, route }) {
+    const { email } = route.params;
+    const [codigo, setCodigo] = useState('');
+    const [nuevaClave, setNuevaClave] = useState('');
 
-    const restaurarPassword = async () => {
+    const restaurarPassword2 = async () => {
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("accept", "application/json");
 
         var raw = JSON.stringify({
-            "email": email
+            "email": email,
+            "otp": codigo,
+            "newPassword": nuevaClave
         });
 
         var requestOptions = {
@@ -20,15 +24,15 @@ export default function RecuperarClave({ navigation }) {
             redirect: 'follow'
         };
 
-        fetch("https://myhome-backend.vercel.app/api/v1/users/forgot-password", requestOptions)
+        fetch("https://myhome-backend.vercel.app/api/v1/users/reset-password", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
-                    Alert.alert('Código enviado', 'Se ha enviado un código de 6 dígitos a su mail. Por favor, ingréselo junto a la nueva contraseña para restaurarla', [
+                    Alert.alert('Contraseña restaurada', 'Se ha cambiado su contraseña, por favor, reingrese usando su nueva clave', [
                         { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ]);
                     console.log(result)
-                    navigation.navigate('recuperarClave2', { email: email });
+                    navigation.navigate('logearInmobiliaria');
                 } else {
                     console.log('Error de backend:', result);
                     Alert.alert('Error', result.message, [
@@ -38,19 +42,27 @@ export default function RecuperarClave({ navigation }) {
             })
             .catch(error => console.log('error', error));
     }
+
     return (
         <View style={styles.container}>
-            <Text style={styles.textoh1}>Ingresá tu correo para restaurar tu contraseña</Text>
+            <Text style={styles.textoh1}>Restaurar contraseña</Text>
             <Text style={styles.subtitulo}>Inmobiliarias</Text>
             <View style={styles.form}>
-                <Text style={styles.label}>Correo electrónico</Text>
+                <Text style={styles.label}>Código de 6 dígitos</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder='E-mail'
-                    value={email}
-                    onChangeText={setEmail} />
+                    placeholder='Código'
+                    value={codigo}
+                    onChangeText={setCodigo} />
+                <Text style={styles.label}>Nueva contraseña</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry
+                    placeholder='Contraseña nueva'
+                    value={nuevaClave}
+                    onChangeText={setNuevaClave} />
             </View>
-            <TouchableOpacity style={styles.boton} title="Register" onPress={restaurarPassword} >
+            <TouchableOpacity style={styles.boton} title="Register" onPress={restaurarPassword2} >
                 <Text style={styles.textoBoton}>Restaurar contraseña</Text>
             </TouchableOpacity>
         </View>
