@@ -1,34 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { contactBackend } from '../../API';
-
-
 
 export default function RegisterInmobiliaria({ navigation }) {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rePassword, setRePassword] = useState('');
+
     const registrarInmo = async () => {
-        let data = {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("accept", "application/json");
+
+        var raw = JSON.stringify({
             "fantasyName": nombre,
             "email": email,
-            "contactEmail": email,
             "password": password,
-            "role": 'business'
+            "contactEmail": email,
+            "role": "business"
+        });
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
-        try {
-            if (password == rePassword) {
-                let res = await contactBackend("/real-state-companies", false, "POST", null, data, true, 201)
-                console.log(res)
-                navigation.navigate('logearInmobiliaria')
+
+
+        if (password === rePassword){
+        fetch("https://myhome-backend.vercel.app/api/v1/real-state-companies", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        Alert.alert('Éxito', 'La inmobiliaria fue creada con éxito', [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                        console.log(result)
+                        navigation.navigate('logearInmobiliaria');
+                    } else {
+                        console.log('Error de backend:', result);
+                        Alert.alert('Error', result.message, [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(error => console.log('error', error));
             }else{
-                alert("Las contraseñas no coinciden, por favor reingréselas correctamente")
+                Alert.alert('Error', 'Las contraseñas son diferentes, por favor reingréselas correctamente', [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ]);
             }
-        } catch (e) {
-            console.log(e)
-        }
+        
+        
     }
+    
     return (
         <View style={styles.container}>
             <Text style={styles.textoh1}>Registrate en nuestra plataforma</Text>
@@ -53,6 +80,7 @@ export default function RegisterInmobiliaria({ navigation }) {
                     secureTextEntry
                     value={password}
                     onChangeText={setPassword} />
+                <Text style={styles.aviso}>Debe poseer: entre 8 y 16 caracteres alfanuméricos, dos letras mayúsculas,un caracter especial, elegir entre: !@#$&*, tres letras minúsculas, dos números</Text>
                 <Text style={styles.label}>Reingresá tu clave</Text>
                 <TextInput
                     style={styles.input}
@@ -61,7 +89,7 @@ export default function RegisterInmobiliaria({ navigation }) {
                     value={rePassword}
                     onChangeText={setRePassword} />
             </View>
-            <TouchableOpacity style={styles.boton} title="Register" onPress={ registrarInmo } >
+            <TouchableOpacity style={styles.boton} title="Register" onPress={registrarInmo} >
                 <Text style={styles.textoBoton}>Registrar Inmobiliaria</Text>
             </TouchableOpacity>
         </View>
@@ -116,6 +144,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 10,
         fontWeight: 'bold'
+    },
+    aviso:{
+        fontSize: 12,
+        marginBottom: 10,
+        fontWeight: 'bold',
+        color: 'red',
+        textAlign: 'center'
     },
     input: {
         height: 40,

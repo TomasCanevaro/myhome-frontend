@@ -18,6 +18,7 @@ import MainPageUsuario from './componentes/MainUsuario/mainPageUsuario';
 import DrawerNavigation from './componentes/Navigation/drawerNavigation';
 import DrawerNavigationUsuario from './componentes/Navigation/drawerNavigationUsuario';
 import Card from './componentes/Reusables/card';
+import RecuperarClave2 from './componentes/LogeoInmobiliaria/recuperarClave2';
 
 
 
@@ -48,6 +49,7 @@ export default function App() {
             <Stack.Screen name="prelogin" component={PreLogin} />
             <Stack.Screen name="logearInmobiliaria" component={LoginInmobiliaria} />
             <Stack.Screen name="recuperarClave" component={RecuperarClave} />
+            <Stack.Screen name="recuperarClave2" component={RecuperarClave2} />
             <Stack.Screen name="mainPageInmobiliaria" component={DrawerNavigation} />
           </Stack.Navigator>
         </View>
