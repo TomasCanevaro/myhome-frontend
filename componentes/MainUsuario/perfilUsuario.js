@@ -34,7 +34,7 @@ export default function RegisterInmobiliaria({ navigation }) {
             <TouchableOpacity style={styles.boton} title="Save" onPress={ () => {} } >
                 <Text style={styles.textoBoton}>Guardar cambios</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.boton} title="DeleteUser" onPress={ () => {} } >
+            <TouchableOpacity style={styles.boton2} title="DeleteUser" onPress={ () => {} } >
                 <Text style={styles.textoBoton}>Dar de baja cuenta</Text>
             </TouchableOpacity>
         </View>
@@ -45,6 +45,14 @@ const styles = StyleSheet.create({
     boton: {
         alignItems: 'center',
         backgroundColor: '#284B63',
+        padding: 25,
+        marginTop: 50,
+        borderRadius: 10,
+        width: 260,
+    },
+    boton2: {
+        alignItems: 'center',
+        backgroundColor: '#800000',
         padding: 25,
         marginTop: 50,
         borderRadius: 10,
@@ -73,6 +81,7 @@ const styles = StyleSheet.create({
     },
     form: {
         backgroundColor: 'white',
+        width: 300,
         padding: 20,
         borderRadius: 10,
         shadowColor: 'black',

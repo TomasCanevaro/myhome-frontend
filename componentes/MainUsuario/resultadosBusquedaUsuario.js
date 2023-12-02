@@ -8,7 +8,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
     const [misResultados, setMisResultados] = useState([]);
     const [token, setToken] = useState('');
 
-    const { operacion, tipoPropiedad, provincia, localidad, barrio, cambio, desde, hasta, ambientes, dormitorios, baños, antiguedad, amenities } = route.params;
+    const { operacion, tipoPropiedad, provincia, localidad, cambio, desde, hasta, ambientes, dormitorios, baños, amenities } = route.params;
 
     const mostrarResultados = async () => {
         const url = `https://myhome-backend.vercel.app/api/v1/properties`;
@@ -30,7 +30,20 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
             if (result.success) {
                 console.log(result);
                 console.log(url)
-                setMisFavoritos(result.properties);
+                /*
+                misResultados = misResultados.filter((property, index) => (
+                    property.propertyType.toLowerCase() == tipoPropiedad.toLowerCase() &&
+                    property.adress.province.toLowerCase() == provincia.toLowerCase() &&
+                    property.currency == cambio
+                    property.price > desde &&
+                    property.price < hasta
+                    property.rooms == ambientes &&
+                    property.bedrooms == dormitorios &&
+                    property.bathrooms == baños &&
+                    property.amenities == amenities
+                ))
+                */
+                setMisResultados(result.properties);
             } else {
                 console.log('Error de backend:', result);
                 console.log(result.success);
@@ -45,10 +58,42 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
         }
     }
 
-    const handleAddFavorite = async () => {
-        
+    const handleAddFavorite = async (property) => {
+        var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("accept", "application/json");
+            myHeaders.append("authorization", token);
+            var raw = JSON.stringify({
+                "user": null,
+                "property": property,
+            });
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            fetch("https://myhome-backend.vercel.app/api/v1/favorites", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        Alert.alert('Éxito', 'El favorito fue creado con éxito', [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                        console.log(result)
+                    } else {
+                        console.log('Error de backend:', result);
+                        console.log(result.success);
+                        console.log(result.message);
+                        Alert.alert('Error', result.message, [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(error => console.log('error', error));
     }
 
+    /*
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -63,6 +108,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
         };
         fetchData();
     }, []);
+    */
 
     useFocusEffect(
         React.useCallback(() => {
@@ -72,7 +118,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
                 }
             };
             fetchResultados();
-        }, [token, userID])
+        }, [token])
     );
 
     return (
@@ -111,7 +157,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
 
 
                             <View style={styles.columna4}>
-                                <TouchableOpacity onPress={() => handleAddFavorite(property._id)}>
+                                <TouchableOpacity onPress={() => handleAddFavorite(property)}>
                                     <Image
                                         style={styles.clickableIcon}
                                         source={require('../../assets/favorite.png')}

@@ -4,8 +4,11 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-nativ
 export default function UsuarioComunAcceder({ navigation }) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('usuarioComunElegirCuenta')} >
-        <Text style={styles.textoBoton}>LogIn with Google</Text>
+      <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('usuarioComunLogin')} >
+        <Text style={styles.textoBoton}>Iniciar Sesion</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('usuarioComunCrearCuenta')} >
+        <Text style={styles.textoBoton}>Crear Cuenta Nueva</Text>
       </TouchableOpacity>
     </View>
   );

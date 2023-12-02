@@ -4,7 +4,10 @@ import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 
 import Bienvenida from './componentes/bienvenida';
 import UsuarioComunAcceder from './componentes/LogeoUsuario/UsuarioComunAcceder';
-import UsuarioComunElegirCuenta from './componentes/LogeoUsuario/usuarioComunElegirCuenta';
+import UsuarioComunLogin from './componentes/LogeoUsuario/usuarioComunLogin';
+import UsuarioComunCrearCuenta from './componentes/LogeoUsuario/usuarioComunCrearCuenta';
+import RecuperarClaveUsuario from './componentes/LogeoUsuario/recuperarClaveUsuario';
+import RecuperarClaveUsuario2 from './componentes/LogeoUsuario/recuperarClaveUsuario2';
 import UsuarioInicio from './componentes/MainUsuario/mainPageUsuario';
 
 import PreLogin from './componentes/LogeoInmobiliaria/preLogin';
@@ -42,7 +45,10 @@ export default function App() {
             <Stack.Screen name="bienvenida" component={Bienvenida} />
 
             <Stack.Screen name="usuarioComunAcceder" component={UsuarioComunAcceder} />
-            <Stack.Screen name="usuarioComunElegirCuenta" component={UsuarioComunElegirCuenta} />
+            <Stack.Screen name="usuarioComunLogin" component={UsuarioComunLogin} />
+            <Stack.Screen name="usuarioComunCrearCuenta" component={UsuarioComunCrearCuenta} />
+            <Stack.Screen name="recuperarClaveUsuario" component={RecuperarClaveUsuario} />
+            <Stack.Screen name="recuperarClaveUsuario2" component={RecuperarClaveUsuario2} />
             <Stack.Screen name="mainPageUsuario" component={DrawerNavigationUsuario} />
             
             <Stack.Screen name="registrarInmobiliaria" component={RegisterInmobiliaria} />
