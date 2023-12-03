@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { firebase } from '@react-native-firebase/app';
 
 import Bienvenida from './componentes/bienvenida';
 import UsuarioComunAcceder from './componentes/LogeoUsuario/UsuarioComunAcceder';
