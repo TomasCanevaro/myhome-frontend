@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 export default function ResultadosBusquedaUsuario({ route, navigation }) { 
     const [misResultados, setMisResultados] = useState([]);
     const [token, setToken] = useState('');
+    const [email, setEmail] = useState('')
 
     const { operacion, tipoPropiedad, provincia, localidad, cambio, desde, hasta, ambientes, dormitorios, baños, amenities } = route.params;
 
@@ -64,7 +65,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
             myHeaders.append("accept", "application/json");
             myHeaders.append("authorization", token);
             var raw = JSON.stringify({
-                "user": null,
+                "user": email,
                 "property": property,
             });
             var requestOptions = {
@@ -93,14 +94,18 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
                 .catch(error => console.log('error', error));
     }
 
-    /*
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const userTokenKey = 'userToken';
+                const userEmailKey = 'userMail';
                 const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
+                const storedEmailKey = await SecureStore.getItemAsync(userEmailKey);
                 if (storedTokenKey) {
                     setToken(storedTokenKey);
+                }
+                if (storedEmailKey) {
+                    setEmail(storedEmailKey);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -108,17 +113,16 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
         };
         fetchData();
     }, []);
-    */
 
     useFocusEffect(
         React.useCallback(() => {
-            const fetchResultados = async () => {
-                if (token) {
+            const fetchPropiedades = async () => {
+                if (token && email) {
                     await mostrarResultados();
                 }
             };
-            fetchResultados();
-        }, [token])
+            fetchPropiedades();
+        }, [token, email])
     );
 
     return (
