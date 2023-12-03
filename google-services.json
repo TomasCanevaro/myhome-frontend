@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "62431394071",
+    "project_id": "myhome-403406",
+    "storage_bucket": "myhome-403406.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62431394071:android:b8b9629a31a7f138531f52",
+        "android_client_info": {
+          "package_name": "com.tcanevaro.myhomefrontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrdsR2h-LgGSb536l-tdb8fPPMbkCoJtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

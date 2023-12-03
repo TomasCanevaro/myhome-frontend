@@ -2,100 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { contactBackend } from '../../API';
 import * as SecureStore from 'expo-secure-store';
+import {
+    GoogleSignin,
+    GoogleSigninButton,
+    statusCodes,
+  } from '@react-native-google-signin/google-signin';
 
 
 export default function UsuarioComunLogin({navigation}) {
-    const [email, setEmail] = useState(''); 
-    const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState({}); 
-    const [isFormValid, setIsFormValid] = useState(false); 
-    const [key, onChangeKey] = useState('');
-    const [value, onChangeValue] = useState('');
-    const [result, onChangeResult] = useState('(result)');
+    
+    GoogleSignin.configure();
 
-    async function save(key,value){
-        await SecureStore.setItemAsync(key, value);
-    }
+    
 
-    useEffect(() => { 
-        validateForm(); 
-    }, [email, password]); 
-
-    const Alerta = () =>
-    Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
-      ]);
-
-    const validateForm = () => { 
-        let errors = {}; 
-        if (!email) { 
-            errors.email = 'Ingresar correo electrónico'; 
-        } else if (!/\S+@\S+\.\S+/.test(email)) { 
-            errors.email = 'Correo electrónico inválido'; 
-        } 
-        if (!password) { 
-            errors.password = 'Ingresar contraseña'; 
-        } 
-        setErrors(errors); 
-        setIsFormValid(Object.keys(errors).length === 0); 
-    }; 
-
-    const logearUsuario = async () => {
-        let data = {
-            "email": email,
-            "password": password
-        };
+    signIn = async () => {
         try {
-            if (isFormValid) {
-                let res = await contactBackend("/auths", false, "POST", null, data, false, 200)
-                console.log(res)
-                save('userToken',res.bearerToken)
-                save('userName',res.user.firstName)
-                save('userMail',res.user.email)
-                navigation.navigate('mainPageUsuario')
-
-            }else{
-                Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
-                    {text: 'OK', onPress: () => console.log('OK Pressed')},
-                  ]);
-            }
-        } catch (e) {
-            console.log(e)
-            Alerta()
+          await GoogleSignin.hasPlayServices();
+          const userInfo = await GoogleSignin.signIn();
+          setState({ userInfo });
+        } catch (error) {
+          if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+            // user cancelled the login flow
+          } else if (error.code === statusCodes.IN_PROGRESS) {
+            // operation (e.g. sign in) is in progress already
+          } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+            // play services not available or outdated
+          } else {
+            // some other error happened
+          }
         }
-    }
+      };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.textoh1}>Ingresá tus credenciales</Text>
-            <Text style={styles.subtitulo}>Usuarios</Text>
-            <View style={styles.form}>
-                <Text style={styles.label}>Correo electrónico</Text>
-                <TextInput 
-                style={styles.input} 
-                placeholder='E-mail'
-                value = {email}
-                onChangeText={setEmail} />
-                <Text style={styles.label}>Clave</Text>
-                <TextInput style={styles.input} 
-                placeholder='Contraseña' 
-                secureTextEntry
-                value = {password}
-                onChangeText={setPassword}
-                 />
-            </View>
-            <TouchableOpacity style={styles.boton} title="Login" onPress={logearUsuario}  >
-                <Text style={styles.textoBoton}>Iniciar sesión</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.botonChico} title="olvideClave" onPress={() => navigation.navigate('recuperarClaveUsuario')} >
-                <Text style={styles.textoBoton}>Olvidé mi contraseña</Text>
-            </TouchableOpacity>
-
-            {Object.values(errors).map((error, index) => ( 
-                <Text key={index} style={styles.error}> 
-                    {error} 
-                </Text> 
-            ))} 
+            <GoogleSigninButton
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color.Dark}
+                onPress={this._signIn}
+                disabled={this.state.isSigninInProgress}
+                />;
         </View>
     );
 }
