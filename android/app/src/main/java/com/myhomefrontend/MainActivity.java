@@ -1,4 +1,4 @@
-package com.tcanevaro.myhomefrontend;
+package com.myhomefrontend;
 
 import android.os.Build;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.tcanevaro.myhomefrontend;
+package com.myhomefrontend;
 
 import android.app.Application;
 import android.content.res.Configuration;
