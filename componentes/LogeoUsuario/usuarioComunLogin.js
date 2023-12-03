@@ -50,6 +50,7 @@ export default function UsuarioComunLogin({navigation}) {
                 let res = await contactBackend("/auths", false, "POST", null, data, false, 200)
                 console.log(res)
                 save('userToken',res.bearerToken)
+                save('userID',res.user._id)
                 save('userName',res.user.firstName)
                 save('userMail',res.user.email)
                 navigation.navigate('mainPageUsuario')

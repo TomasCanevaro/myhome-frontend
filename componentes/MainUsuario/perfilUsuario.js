@@ -6,7 +6,112 @@ export default function RegisterInmobiliaria({ navigation }) {
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [email, setEmail] = useState('');
+    const [token, setToken] = useState('');
+    const [userID, setUserID] = useState('');
 
+    const modificarUsuario = async () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("accept", "application/json");
+
+        var raw = JSON.stringify({
+            "firstName": nombre,
+            "lastName": apellido,
+            "email": email,
+        });
+
+        var requestOptions = {
+            method: 'PATCH',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+
+        fetch(`https://myhome-backend.vercel.app/api/v1/users/${userID}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        Alert.alert('Éxito', 'El usuario fue modificado con éxito', [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                        console.log(result)
+                    } else {
+                        console.log('Error de backend:', result);
+                        Alert.alert('Error', result.message, [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ]);
+                    }
+                })
+                .catch(error => console.log('error', error));
+
+    }
+
+    const handleDeleteUsuario = async () => {
+        Alert.alert(
+            'Confirmar',
+            '¿Estás seguro que deseas borrar este usuario?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Borrar',
+                    onPress: async () => {
+                        try {
+                            const response = await fetch(`https://myhome-backend.vercel.app/api/v1/users/${userID}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `${token}`,
+                                },
+                            });
+                            if (!response.ok) {
+                                const errorMessage = await response.text();
+                                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
+                            }
+                            console.log('Usuario borrado correctamente');
+                        } catch (error) {
+                            console.error('Error borrando usuario:', error.message);
+                        }
+                    },
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userTokenKey = 'userToken';
+                const userIDKey = 'userID';
+                const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
+                const storedUserIDKey = await SecureStore.getItemAsync(userIDKey);
+                if (storedTokenKey) {
+                    setToken(storedTokenKey);
+                }
+                if (storedEmailKey) {
+                    setUserID(storedUserIDKey);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchFavoritos = async () => {
+                if (token && userID) {
+                    await mostrarFavoritos();
+                }
+            };
+            fetchFavoritos();
+        }, [token, userID])
+    );
     
     return (
         <View style={styles.container}>
@@ -15,13 +120,13 @@ export default function RegisterInmobiliaria({ navigation }) {
                 <Text style={styles.label}>Nombre</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder='Nombre de fantasía'
+                    placeholder='Nombre'
                     value={nombre}
                     onChangeText={setNombre} />
                 <Text style={styles.label}>Apellido</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder='Apellido de fantasía'
+                    placeholder='Apellido'
                     value={apellido}
                     onChangeText={setApellido} />
                 <Text style={styles.label}>Correo electrónico</Text>
@@ -31,10 +136,10 @@ export default function RegisterInmobiliaria({ navigation }) {
                     value={email}
                     onChangeText={setEmail} />
             </View>
-            <TouchableOpacity style={styles.boton} title="Save" onPress={ () => {} } >
+            <TouchableOpacity style={styles.boton} title="Save" onPress={ modificarUsuario } >
                 <Text style={styles.textoBoton}>Guardar cambios</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.boton2} title="DeleteUser" onPress={ () => {} } >
+            <TouchableOpacity style={styles.boton2} title="DeleteUser" onPress={ handleDeleteUsuario } >
                 <Text style={styles.textoBoton}>Dar de baja cuenta</Text>
             </TouchableOpacity>
         </View>

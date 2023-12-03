@@ -167,21 +167,21 @@ export default function VerPropiedad({ route, navigation }) {
                         <TouchableOpacity
                             style={styles.boton}
                             title="Press me"
-                            
+                            onPress={() => {}}
                         >
                             <Text style={styles.textoBoton}>Contacto</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.boton}
                             title="Press me"
-                            
+                            onPress={() => {}}
                         >
                             <Text style={styles.textoBoton}>Visita</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.boton}
                             title="Press me"
-                            
+                            onPress={() => {}}
                         >
                             <Text style={styles.textoBoton}>Reservar</Text>
                         </TouchableOpacity>
