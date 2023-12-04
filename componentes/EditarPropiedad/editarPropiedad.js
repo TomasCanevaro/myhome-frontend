@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
+import { useFocusEffect } from '@react-navigation/native';
 
-export default function CrearPropiedad({ navigation }) {
+export default function EditarPropiedad({ navigation, route }) {
     const [images, setImages] = useState([]);
     const [token, setToken] = useState('');
     const [email, setEmail] = useState('');
+    const { propertyID } = route.params;
 
     useEffect(() => {
         (async () => {
@@ -57,80 +59,84 @@ export default function CrearPropiedad({ navigation }) {
     };
 
     const handleSubmit = async () => {
-    if (images.length === 0) {
-        Alert.alert('Error al continuar', 'Por favor, suba por lo menos una imagen', [
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
-        ]);
-    } else {
-        try {
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "multipart/form-data");
-            myHeaders.append("accept", "application/json");
-            myHeaders.append("authorization", token);
+        if (images.length === 0) {
+            Alert.alert('Error al continuar', 'Por favor, suba por lo menos una imagen', [
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ]);
+        } else {
+            try {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "multipart/form-data");
+                myHeaders.append("accept", "application/json");
+                myHeaders.append("authorization", token);
 
-            // Función para enviar una imagen al servidor
-            const sendImage = async (image, index) => {
-                try {
-                    const formData = new FormData();
-                    formData.append('photo', {
-                        uri: image,
-                        name: `photo${index}.png`,
-                        type: 'image/png',
-                    });
-            
-                    const requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: formData,
-                        redirect: 'follow',
-                    };
-            
-                    const response = await fetch("https://myhome-backend.vercel.app/api/v1/properties/photo", requestOptions);
-            
-                    // Verificar si la respuesta indica éxito (código 2xx)
-                    if (!response.ok) {
-                        throw new Error(`Error al procesar imagen ${index}. Código de estado: ${response.status}`);
-                    }
-            
-                    return response;
-                } catch (error) {
-                    console.error(`Error al procesar imagen ${index}:`, error.message);
-                    throw error; // Puedes manejar el error según tus necesidades
-                }
-            };
-            
-            // Función para enviar imágenes secuencialmente
-            const sendImagesSequentially = async () => {
-                const processedImages = [];
-                for (let index = 0; index < images.length; index++) {
+                // Función para enviar una imagen al servidor
+                const sendImage = async (image, index) => {
                     try {
-                        const response = await sendImage(images[index], index);
-                        const result = await response.json(); // Supongo que el servidor devuelve JSON
-                        const imageUrl = result.urlImage; // Ajusta esto según la estructura real de la respuesta del servidor
-                        processedImages.push(imageUrl);
+                        const formData = new FormData();
+                        formData.append('photo', {
+                            uri: image,
+                            name: `photo${index}.png`,
+                            type: 'image/png',
+                        });
+
+                        const requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: formData,
+                            redirect: 'follow',
+                        };
+
+                        const response = await fetch("https://myhome-backend.vercel.app/api/v1/properties/photo", requestOptions);
+
+                        // Verificar si la respuesta indica éxito (código 2xx)
+                        if (!response.ok) {
+                            throw new Error(`Error al procesar imagen ${index}. Código de estado: ${response.status}`);
+                        }
+
+                        return response;
                     } catch (error) {
-                        console.error('Error al procesar imágenes:', error.message);
-                        // Puedes manejar el error según tus necesidades
+                        console.error(`Error al procesar imagen ${index}:`, error.message);
+                        throw error; // Puedes manejar el error según tus necesidades
                     }
-                }
-                return processedImages;
-            };
+                };
 
-            // Llamar a la función para enviar imágenes secuencialmente
-            const processedImages = await sendImagesSequentially();
-            
-            console.log('Todas las imágenes fueron procesadas con éxito');
-            console.log('Imágenes procesadas:', processedImages);
+                // Función para enviar imágenes secuencialmente
+                const sendImagesSequentially = async () => {
+                    const processedImages = [];
+                    for (let index = 0; index < images.length; index++) {
+                        try {
+                            const response = await sendImage(images[index], index);
+                            const result = await response.json(); // Supongo que el servidor devuelve JSON
+                            const imageUrl = result.urlImage; // Ajusta esto según la estructura real de la respuesta del servidor
+                            processedImages.push(imageUrl);
+                        } catch (error) {
+                            console.error('Error al procesar imágenes:', error.message);
+                            // Puedes manejar el error según tus necesidades
+                        }
+                    }
+                    return processedImages;
+                };
 
-            // Navegar a la siguiente pantalla solo después de procesar todas las imágenes
-            navigation.navigate('Crear propiedad: Paso 2', { selectedImages: processedImages });
-            setImages([]);
-        } catch (error) {
-            console.error('Error al procesar imágenes:', error.message);
-            // Maneja el error según tus necesidades
+                // Llamar a la función para enviar imágenes secuencialmente
+                const processedImages = await sendImagesSequentially();
+
+                console.log('Todas las imágenes fueron procesadas con éxito');
+                console.log('Imágenes procesadas:', processedImages);
+
+                // Navegar a la siguiente pantalla solo después de procesar todas las imágenes
+                navigation.navigate('Editar propiedad: Paso 2', {
+                    selectedImages: processedImages,
+                    propertyID: propertyID
+                });
+                setImages([]);
+            } catch (error) {
+                console.error('Error al procesar imágenes:', error.message);
+                // Maneja el error según tus necesidades
+            }
         }
-    }
-};
+    };
+
 
     return (
         <View style={styles.container}>
@@ -139,7 +145,7 @@ export default function CrearPropiedad({ navigation }) {
                     <View key={index} style={styles.imageContainer}>
                         <Image style={styles.agregarImagen} source={{ uri: image }} />
                         <TouchableOpacity onPress={() => deleteImage(index)}>
-                            <Text style={styles.deleteButton}>Borrar</Text>
+                            <Text style={styles.deleteButton}>Delete</Text>
                         </TouchableOpacity>
                     </View>
                 ))}

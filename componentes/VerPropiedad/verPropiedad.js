@@ -3,12 +3,22 @@ import { StyleSheet, Text, ActivityIndicator, Linking, View, ScrollView, Touchab
 import { Dropdown } from 'react-native-element-dropdown';
 import * as Location from 'expo-location';
 import * as SecureStore from 'expo-secure-store';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function VerPropiedad({ route, navigation }) {
 
     const [propiedad, setPropiedad] = useState({});
     const { propertyID } = route.params;
     const [token, setToken] = useState('');
+    const [estado, setEstado] = useState('');
+    const [selectedImage, setSelectedImage] = useState(0);
+    const dataEstado = [
+        { label: 'En alquiler', value: 'en alquiler' },
+        { label: 'En venta', value: 'en venta' },
+        { label: 'Reservada', value: 'reservada' },
+        { label: 'Alquilada', value: 'alquilada' },
+        { label: 'Vendida', value: 'vendida' }
+    ];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,15 +73,17 @@ export default function VerPropiedad({ route, navigation }) {
         }
     };
 
-    useEffect(() => {
+    useFocusEffect(
+        React.useCallback(() => {
         if (token && propertyID) {
             mostrarPropiedad(token, propertyID);
             console.log(propiedad)
         }
-    }, [token, propertyID]);
+    }, [token, propertyID]));
 
     useEffect(() => {
         console.log(propiedad);
+        console.log(propiedad.photos)
     }, [propiedad]);
 
 
@@ -87,32 +99,112 @@ export default function VerPropiedad({ route, navigation }) {
                     <Text style={styles.title}>
                         {propiedad.propertyType} {propiedad.status} - {propiedad.address.district}
                     </Text>
+                    <View styles={styles.fila}>
+                        <Dropdown
+                            style={styles.dropdown}
+                            placeholder=''
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            iconStyle={styles.iconStyle}
+                            data={dataEstado}
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            value={propiedad.status}
+                            onChange={async (item) => {
+                                const newStatus = item.value;
+                                setEstado(newStatus);
+
+                                try {
+                                    const myHeaders = new Headers();
+                                    myHeaders.append("Content-Type", "application/json");
+                                    myHeaders.append("accept", "application/json");
+                                    myHeaders.append("authorization", token);
+
+                                    const id = propertyID;
+
+                                    const raw = JSON.stringify({
+                                        status: estado
+                                    });
+
+                                    const requestOptions = {
+                                        method: 'PATCH',
+                                        headers: myHeaders,
+                                        body: raw,
+                                        redirect: 'follow'
+                                    };
+
+                                    const response = await fetch(`https://myhome-backend.vercel.app/api/v1/properties/${id}`, requestOptions);
+
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! Status: ${response.status}`);
+                                    }
+
+                                    const result = await response.json();
+                                    console.log(result);
+                                    Alert.alert('Éxito', 'El estado fue actualizado con éxito', [
+                                        { text: 'OK', onPress: () => navigation.navigate("Mis propiedades") },
+                                    ]);
+                                } catch (error) {
+                                    console.error('Error updating status:', error);
+                                    Alert.alert('Error', 'Hubo un error al actualizar el estado, intente nuevamente', [
+                                        { text: 'OK', onPress: () => console.log("ok") },
+                                    ]);
+                                }
+                            }}
+                        />
+                    </View>
+
+                    {selectedImage !== null && (
+                        <TouchableOpacity
+                            style={[styles.image, styles.selectedImage]}
+                            onPress={() => setSelectedImage(null)}
+                        >
+                            <Image source={{ uri: propiedad.photos[selectedImage] }} style={styles.selectedImage} />
+                        </TouchableOpacity>
+                    )}
+
                     <View style={styles.imageContainer}>
                         {propiedad.photos.map((photo, index) => (
-                            <Image key={index} source={{ uri: photo }} style={styles.image} />
+                            <TouchableOpacity
+                                key={index}
+                                onPress={() => setSelectedImage(index)}
+                                style={[
+                                    styles.image,
+                                    {
+                                        borderColor: selectedImage === index ? 'blue' : 'transparent',
+                                        borderWidth: selectedImage === index ? 2 : 0,
+                                    },
+                                ]}
+                            >
+                                <Image source={{ uri: photo }} style={styles.image} />
+                            </TouchableOpacity>
                         ))}
                     </View>
                     <View style={styles.form}>
                         <View style={styles.fila}>
                             <Text style={styles.rawText}>Descripción: </Text>
                             <View style={styles.descripcionContainer}>
-                                <Text style={styles.rawText2}>{propiedad.description} </Text>
+                                <Text style={styles.contacto}>{propiedad.description} </Text>
                             </View>
                         </View>
-
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Antiguedad: </Text>
+                            <Text style={styles.rawText2}>{propiedad.age} años</Text>
+                        </View>
                         <View style={styles.fila}>
                             <Text style={styles.rawText}>Dirección: </Text>
                             <View style={styles.descripcionContainer}>
-                                <Text style={styles.rawText2}>{propiedad.address.street}{propiedad.address.number}, {propiedad.address.district}, {propiedad.address.province} </Text>
+                                <Text style={styles.rawText2}>{propiedad.address.street} {propiedad.address.number}, {propiedad.address.district}, {propiedad.address.province} </Text>
                             </View>
                         </View>
                         <View style={styles.fila}>
                             <Text style={styles.rawText}>Precio:</Text>
-                            <Text style={styles.rawText2}>{propiedad.price} {propiedad.currency}</Text>
+                            <Text style={styles.precio}>{propiedad.price} {propiedad.currency}</Text>
                         </View>
                         <View style={styles.fila}>
                             <Text style={styles.rawText}>Expensas:</Text>
-                            <Text style={styles.rawText2}>{propiedad.expensesPrice} {propiedad.currency}</Text>
+                            <Text style={styles.precio}>{propiedad.expensesPrice} {propiedad.currency}</Text>
                         </View>
                         <View style={styles.fila}>
                             <Text style={styles.rawText}>Metros cuadrados cubiertos: </Text>
@@ -131,17 +223,45 @@ export default function VerPropiedad({ route, navigation }) {
                             <Text style={styles.rawText2}>{propiedad.bedrooms}</Text>
                         </View>
                         <View style={styles.fila}>
-                            <Text style={styles.rawText}>Baños </Text>
+                            <Text style={styles.rawText}>Baños: </Text>
                             <Text style={styles.rawText2}>{propiedad.bathrooms}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Terraza:</Text>
+                            <Text style={styles.rawText2}>{propiedad.hasTerrace === "true" ? 'Si' : 'No'}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Balcón:</Text>
+                            <Text style={styles.rawText2}>{propiedad.hasBalcony === "true" ? 'Si' : 'No'}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Baulera:</Text>
+                            <Text style={styles.rawText2}>{propiedad.hasStorageRoom === "true" ? 'Si' : 'No'}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Garage:</Text>
+                            <Text style={styles.rawText2}>{propiedad.garage}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Amenities:</Text>
+                            <View style={[styles.fila]}>
+                                {propiedad.amenities.map((amenity, index) => (
+                                    <Text key={index} style={styles.rawText2}>
+                                        {amenity}ㅤ
+                                    </Text>
+                                ))}
+                            </View>
                         </View>
                     </View>
 
                     <View style={styles.form}>
                         <View style={styles.fila}>
                             <Text style={styles.rawText}>Contacto:</Text>
-                            <Text style={styles.rawText2}>{propiedad.associatedRealEstate}</Text>
+                            <Text style={styles.contacto}>{propiedad.associatedRealEstate}</Text>
                         </View>
                     </View>
+
+
 
                     <View style={styles.fila}>
                         <TouchableOpacity
@@ -204,6 +324,22 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         textTransform: 'capitalize'
     },
+    imageContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 20,
+    },
+    image: {
+        width: 100,
+        height: 100,
+        resizeMode: 'cover',
+        borderRadius: 6,
+    },
+    selectedImage: {
+        width: 300,
+        height: 300, 
+        resizeMode: 'cover',
+    },
     input: {
         height: 35,
         width: 200,
@@ -221,6 +357,17 @@ const styles = StyleSheet.create({
     rawText2: {
         fontSize: 16,
         marginBottom: 18,
+        textTransform: "capitalize",
+    },
+    contacto: {
+        fontSize: 16,
+        marginBottom: 18,
+
+    },
+    precio: {
+        fontSize: 16,
+        marginBottom: 18,
+        textTransform: "uppercase",
     },
     form: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -244,11 +391,56 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white'
     },
+    dropdown: {
+        height: 50,
+        width: 150,
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 12,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        marginBottom: 10,
+        elevation: 2,
+    },
     placeholderStyle: {
         fontSize: 16,
         width: 100,
     },
     selectedTextStyle: {
-        fontSize: 14,
+        fontSize: 16,
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
+    inputSearchStyle: {
+        height: 40,
+        width: 50,
+        fontSize: 16,
+    },
+    selectedStyle: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 14,
+        backgroundColor: 'white',
+        shadowColor: '#000',
+        marginTop: 8,
+        marginRight: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+
+        elevation: 2
     },
 });

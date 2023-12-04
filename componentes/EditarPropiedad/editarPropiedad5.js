@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import * as SecureStore from 'expo-secure-store';
+import { useFocusEffect } from '@react-navigation/native';
 
-export default function CrearPropiedad5({ route, navigation }) {
+export default function EditarPropiedad5({ route, navigation }) {
     const [descripcion, setDescripcion] = useState('');
-    const [estado, setEstado] = useState('');
     const [precio, setPrecio] = useState('');
     const [cambio, setCambio] = useState('');
     const [expensas, setExpensas] = useState('');
-    const dataEstado = [
-        { label: 'En alquiler', value: 'en alquiler' },
-        { label: 'En venta', value: 'en venta' },
-    ];
     const dataCambio = [
         { label: 'Pesos', value: 'ars' },
         { label: 'Dólares', value: 'usd' },
@@ -22,7 +18,7 @@ export default function CrearPropiedad5({ route, navigation }) {
         await SecureStore.setItemAsync(key, value);
     }
 
-    const { selectedImages, calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad,
+    const { selectedImages, propertyID, propiedad, calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad,
         m2cub, m2semi, m2desc, antiguedad, ambientes, habitaciones, banos,
         terraza, balcon, garage, baulera, ubicacion, orientacion, amenities } = route.params;
     const [token, setToken] = useState('');
@@ -47,7 +43,7 @@ export default function CrearPropiedad5({ route, navigation }) {
     );
 
     const handleSubmit = async () => {
-        if (descripcion === '' || estado === '' || precio === '' || cambio === '' || expensas === '') {
+        if (descripcion === '' || precio === '' || cambio === '' || expensas === '') {
             Alert.alert('Error al continuar', 'Faltan rellenar algunos datos, por favor complételos', [
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
@@ -57,6 +53,9 @@ export default function CrearPropiedad5({ route, navigation }) {
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("accept", "application/json");
             myHeaders.append("authorization", token);
+
+            const id = propertyID;
+
             var raw = JSON.stringify({
                 "currency": cambio,
                 "description": descripcion,
@@ -83,7 +82,7 @@ export default function CrearPropiedad5({ route, navigation }) {
                 "garage": garage,
                 "hasStorageRoom": baulera,
                 "age": antiguedad,
-                "propertyType": tipoPropiedad,
+                "propertyType": propiedad.propiedad.propiedad.propiedad.propertyType,
                 "squareMeters": {
                     "covered": m2cub,
                     "semiCovered": m2semi,
@@ -95,28 +94,22 @@ export default function CrearPropiedad5({ route, navigation }) {
                 "photos": selectedImages,
                 "price": precio,
                 "expensesPrice": expensas,
-                "status": estado
             });
             var requestOptions = {
-                method: 'POST',
+                method: 'PUT',
                 headers: myHeaders,
                 body: raw,
                 redirect: 'follow'
             };
-            fetch("https://myhome-backend.vercel.app/api/v1/properties", requestOptions)
+            fetch(`https://myhome-backend.vercel.app/api/v1/properties/${id}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        Alert.alert('Éxito', 'La propiedad fue creada con éxito', [
+                        Alert.alert('Éxito', 'La propiedad fue modificada con éxito', [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                         console.log(result)
                         navigation.navigate('Inicio');
-                        setDescripcion('');
-                        setEstado('');
-                        setPrecio('');
-                        setCambio('');
-                        setExpensas('');
                     } else {
                         console.log('Error de backend:', result);
                         console.log(result.success);
@@ -131,7 +124,7 @@ export default function CrearPropiedad5({ route, navigation }) {
     }
 
     const volverAtras = async () => {
-        navigation.navigate('Crear propiedad: Paso 4', {
+        navigation.navigate('Editar propiedad: Paso 4', {
             selectedImages: selectedImages,
             calle: calle,
             numero: numero,
@@ -156,7 +149,9 @@ export default function CrearPropiedad5({ route, navigation }) {
             baulera: baulera,
             ubicacion: ubicacion,
             orientacion: orientacion,
-            amenities: amenities
+            amenities: amenities,
+            propertyID: propertyID,
+            propiedad: propiedad
         })
     }
 
@@ -167,34 +162,20 @@ export default function CrearPropiedad5({ route, navigation }) {
                 <Text style={styles.rawText}>Descripcion</Text>
                 <TextInput
                     style={styles.input}
+                    placeholder={propiedad.propiedad.propiedad.propiedad.description}
                     value={descripcion}
                     onChangeText={setDescripcion} />
-                <Text style={styles.rawText}>Estado</Text>
-                <Dropdown
-                    style={styles.dropdown}
-                    placeholder=''
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    iconStyle={styles.iconStyle}
-                    data={dataEstado}
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    value={estado}
-                    onChange={item => {
-                        setEstado(item.value);
-                    }}
-                />
                 <Text style={styles.checkText}>Precio</Text>
                 <View style={styles.fila}>
                     <TextInput
                         style={styles.inputPrecio}
+                        placeholder={propiedad.propiedad.propiedad.propiedad.price}
                         value={precio}
                         onChangeText={setPrecio}
                         inputMode='numeric' />
                     <Dropdown
                         style={styles.dropdownPrecio}
-                        placeholder=''
+                        placeholder={propiedad.propiedad.propiedad.propiedad.currency}
                         selectedTextStyle={styles.selectedTextStyle}
                         inputSearchStyle={styles.inputSearchStyle}
                         iconStyle={styles.iconStyle}
@@ -212,12 +193,13 @@ export default function CrearPropiedad5({ route, navigation }) {
                 <View style={styles.fila}>
                     <TextInput
                         style={styles.inputPrecio}
+                        placeholder={propiedad.propiedad.propiedad.propiedad.expensesPrice}
                         value={expensas}
                         onChangeText={setExpensas}
                         inputMode='numeric' />
                     <Dropdown
                         style={styles.dropdownPrecio}
-                        placeholder=''
+                        placeholder={propiedad.propiedad.propiedad.propiedad.currency}
                         selectedTextStyle={styles.selectedTextStyle}
                         inputSearchStyle={styles.inputSearchStyle}
                         iconStyle={styles.iconStyle}
@@ -238,7 +220,7 @@ export default function CrearPropiedad5({ route, navigation }) {
                     <Text style={styles.textoBoton}>Volver</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >
-                    <Text style={styles.textoBoton}>Crear propiedad</Text>
+                    <Text style={styles.textoBoton}>Editar propiedad</Text>
                 </TouchableOpacity>
             </View>
 

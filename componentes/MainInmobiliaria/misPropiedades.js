@@ -7,7 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 export default function MisPropiedades({ navigation }) {
     const [misPropiedades, setMisPropiedades] = useState([]);
     const [token, setToken] = useState('');
-    const [email, setEmail] = useState('')
+    const [email, setEmail] = useState('');
 
     const mostrarPropiedades = async () => {
         const endpoint = 'https://myhome-backend.vercel.app/api/v1/properties';
@@ -162,7 +162,7 @@ export default function MisPropiedades({ navigation }) {
 
 
                             <View style={styles.columna4}>
-                                <TouchableOpacity onPress={() => proximamente()}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Editar propiedad: Paso 1', { propertyID: property._id })}>
                                     <Image
                                         style={styles.clickableIcon}
                                         source={require('../../assets/edit.png')}
