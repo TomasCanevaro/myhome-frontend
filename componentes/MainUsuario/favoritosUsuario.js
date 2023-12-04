@@ -30,7 +30,7 @@ export default function FavoritosUsuario({navigation}) {
             if (result.success) {
                 console.log(result);
                 console.log(url)
-                setMisFavoritos(result.favorites);
+                setMisFavoritos(result.favorites.properties);
             } else {
                 console.log('Error de backend:', result);
                 console.log(result.success);

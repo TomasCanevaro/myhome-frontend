@@ -10,6 +10,7 @@ export default function MainPageUsuario({navigation}) {
     const [misPropiedades, setMisPropiedades] = useState([]);
     const [token, setToken] = useState('');
     const [email, setEmail] = useState('')
+    const [userID, setUserID] = useState('');
 
     const mostrarPropiedades = async () => {
         const url = `https://myhome-backend.vercel.app/api/v1/properties`;
@@ -52,7 +53,7 @@ export default function MainPageUsuario({navigation}) {
             myHeaders.append("accept", "application/json");
             myHeaders.append("authorization", token);
             var raw = JSON.stringify({
-                "user": email,
+                "user": userID,
                 "property": propertyID,
             });
             var requestOptions = {
@@ -86,13 +87,18 @@ export default function MainPageUsuario({navigation}) {
             try {
                 const userTokenKey = 'userToken';
                 const userEmailKey = 'userMail';
+                const userIDKey = 'userID';
                 const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
                 const storedEmailKey = await SecureStore.getItemAsync(userEmailKey);
+                const storedUserIDKey = await SecureStore.getItemAsync(userIDKey);
                 if (storedTokenKey) {
                     setToken(storedTokenKey);
                 }
                 if (storedEmailKey) {
                     setEmail(storedEmailKey);
+                }
+                if (storedUserIDKey) {
+                    setUserID(storedUserIDKey);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);

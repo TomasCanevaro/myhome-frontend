@@ -9,6 +9,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
     const [misResultados, setMisResultados] = useState([]);
     const [token, setToken] = useState('');
     const [email, setEmail] = useState('')
+    const [userID, setUserID] = useState('');
 
     const { operacion, tipoPropiedad, provincia, localidad, barrio, cambio, desde, hasta, ambientes, dormitorios, baños, antiguedad, amenities } = route.params;
 
@@ -69,7 +70,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
             console.log(email);
             console.log(propertyID);
             var raw = JSON.stringify({
-                "user": email,
+                "user": userID,
                 "property": propertyID,
             });
             var requestOptions = {
@@ -86,10 +87,37 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                         console.log(result)
+                    } else if(result.message == "Favorites for this user already exist, you need to use update endpoint") {
+                        var requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: raw,
+                            redirect: 'follow'
+                        };
+                        fetch("https://myhome-backend.vercel.app/api/v1/users/favorites", requestOptions)
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    Alert.alert('Éxito', 'La propiedad fue añadida a favoritos!', [
+                                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                    ]);
+                                    console.log(result)
+                                } else {
+                                    console.log('Error de backend:', result);
+                                    console.log(result.success);
+                                    console.log(result.message);
+                                    console.log(response.code);
+                                    Alert.alert('Error', result.message, [
+                                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                    ]);
+                                }
+                            })
+                            .catch(error => console.log('error', error));
                     } else {
                         console.log('Error de backend:', result);
                         console.log(result.success);
                         console.log(result.message);
+                        console.log(response.code);
                         Alert.alert('Error', result.message, [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
@@ -107,13 +135,18 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
             try {
                 const userTokenKey = 'userToken';
                 const userEmailKey = 'userMail';
+                const userIDKey = 'userID';
                 const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
                 const storedEmailKey = await SecureStore.getItemAsync(userEmailKey);
+                const storedUserIDKey = await SecureStore.getItemAsync(userIDKey);
                 if (storedTokenKey) {
                     setToken(storedTokenKey);
                 }
                 if (storedEmailKey) {
                     setEmail(storedEmailKey);
+                }
+                if (storedUserIDKey) {
+                    setUserID(storedUserIDKey);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
