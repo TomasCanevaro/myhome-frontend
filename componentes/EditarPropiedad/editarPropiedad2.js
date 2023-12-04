@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import * as Location from 'expo-location';
+import * as SecureStore from 'expo-secure-store';
+import { useFocusEffect } from '@react-navigation/native';
 
-export default function CrearPropiedad2({ route, navigation }) {
+export default function EditarPropiedad2({ route, navigation }) {
+    const [token, setToken] = useState('');
+    const [propiedad, setPropiedad] = useState({});
     const [calle, setCalle] = useState('');
     const [numero, setNumero] = useState('');
     const [piso, setPiso] = useState('');
@@ -25,28 +29,88 @@ export default function CrearPropiedad2({ route, navigation }) {
         { label: 'Terreno', value: 'terreno' },
     ];
 
-    const { selectedImages } = route.params;
+    const { selectedImages, propertyID } = route.params;
 
     useEffect(() => {
         console.log('Location updated:');
         console.log('Latitud:', latitud)
         console.log('Longitud:', longitud)
-        console.log(selectedImages)
-        Location.requestForegroundPermissionsAsync();
     }, [latitud, longitud]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userTokenKey = 'userToken';
+                const storedTokenKey = await SecureStore.getItemAsync(userTokenKey);
+                if (storedTokenKey && propertyID) {
+                    setToken(storedTokenKey);
+                }
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
+
+        fetchData();
+    }, [propertyID]);
+
+    const getPropiedad = async (token, propertyID) => {
+        try {
+            const endpoint = 'https://myhome-backend.vercel.app/api/v1/properties';
+            const queryString = `id=${encodeURIComponent(propertyID)}`;
+            const url = `${endpoint}?${queryString}`;
+            const myHeaders = new Headers({
+                'accept': 'application/json',
+                'authorization': `${token}`,
+            });
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: myHeaders,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success && result.properties.length > 0) {
+                console.log(result);
+                setPropiedad(result.properties[0] || {});
+            } else {
+                console.log('Error de backend:', result);
+                console.log(result.success);
+                console.log(result.message);
+                Alert.alert('Error', 'Hubo un error al mostrar la propiedad, por favor intente nuevamente', [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ]);
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            Location.requestForegroundPermissionsAsync();
+            if (token && propertyID) {
+                getPropiedad(token, propertyID);
+                console.log(propiedad)
+                console.log(propiedad.address)
+                
+            }
+        }, [token, propertyID]));
 
     const geocode = async () => {
         try {
-            
             const address = `${calle} ${numero}, ${localidad}`;
             const geocodedLocation = await Location.geocodeAsync(address);
             const firstResult = geocodedLocation[0];
-            
+
             if (firstResult) {
                 console.log('Geocoding result:', firstResult);
                 setLatitud(firstResult.latitude);
                 setLongitud(firstResult.longitude);
-                
                 return {
                     latitud: firstResult.latitude,
                     longitud: firstResult.longitude,
@@ -57,9 +121,14 @@ export default function CrearPropiedad2({ route, navigation }) {
             }
         } catch (error) {
             console.error('Error en geocode:', error);
-            throw error; 
+            throw error;
         }
     };
+
+    useEffect(() => {
+        
+        console.log('Datos de la propiedad:', propiedad);
+    }, [propiedad]);
 
     const handleSubmit = async () => {
         if (calle === '' || numero === '' || localidad === '' || ciudad === '' || provincia === '' || pais === '') {
@@ -70,10 +139,9 @@ export default function CrearPropiedad2({ route, navigation }) {
         else {
             geocode()
                 .then(({ latitud, longitud }) => {
-                    console.log("aaaaaaaaaaaaaaaa");
                     console.log(latitud);
                     console.log(longitud);
-                    navigation.navigate('Crear propiedad: Paso 3', {
+                    navigation.navigate('Editar propiedad: Paso 3', {
                         selectedImages: selectedImages,
                         calle: calle,
                         numero: numero,
@@ -86,25 +154,21 @@ export default function CrearPropiedad2({ route, navigation }) {
                         latitud: latitud,
                         longitud: longitud,
                         tipoPropiedad: tipoPropiedad,
+                        propertyID: propertyID,
+                        propiedad: {propiedad}
                     });
 
-                    setCalle('');
-                    setNumero('');
-                    setPiso('');
-                    setDepartamento('');
-                    setLocalidad('');
-                    setCiudad('');
-                    setProvincia('');
-                    setPais('');
-                    setTipoPropiedad('');
                 })
                 .catch(error => {
                     console.error('Error en geocode:', error);
                 });
         }
     };
+
     return (
+
         <View style={styles.container}>
+
             <Text style={styles.title}>Complete la dirección</Text>
             <View style={styles.form}>
                 <View style={styles.fila}>
@@ -118,7 +182,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                         maxHeight={300}
                         labelField="label"
                         valueField="value"
-                        value={tipoPropiedad}
+                        value={propiedad.propertyType}
                         onChange={item => {
                             setTipoPropiedad(item.value);
                         }}
@@ -128,6 +192,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.rawText}>Calle</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder={propiedad.address ? propiedad.address.street : ''}
                         value={calle}
                         onChangeText={setCalle}
                         required />
@@ -136,6 +201,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.rawText}>Número</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder={propiedad.address ? propiedad.address.number : ''}
                         value={numero}
                         onChangeText={setNumero}
                         inputMode='numeric'
@@ -145,6 +211,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.rawText}>Piso</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder={propiedad.address ? propiedad.address.floor : ''}
                         value={piso}
                         onChangeText={setPiso}
                         inputMode='numeric' />
@@ -153,6 +220,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.rawText}>Departamento</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder={propiedad.address ? propiedad.address.department : ''}
                         value={departamento}
                         onChangeText={setDepartamento} />
                 </View>
@@ -160,6 +228,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.rawText}>Localidad</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder={propiedad.address ? propiedad.address.district : ''}
                         value={localidad}
                         onChangeText={setLocalidad}
                         required />
@@ -168,6 +237,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.rawText}>Ciudad</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder={propiedad.address ? propiedad.address.town : ''}
                         value={ciudad}
                         onChangeText={setCiudad}
                         required />
@@ -176,6 +246,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.rawText}>Provincia</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder={propiedad.address ? propiedad.address.province : ''}
                         value={provincia}
                         onChangeText={setProvincia}
                         required />
@@ -184,6 +255,7 @@ export default function CrearPropiedad2({ route, navigation }) {
                     <Text style={styles.rawText}>País</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder={propiedad.address ? propiedad.address.country : ''}
                         value={pais}
                         onChangeText={setPais}
                         required />
@@ -191,7 +263,7 @@ export default function CrearPropiedad2({ route, navigation }) {
             </View>
 
             <View style={styles.fila}>
-                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Crear propiedad: Paso 1')} >
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={() => navigation.navigate('Editar propiedad: Paso 1')} >
                     <Text style={styles.textoBoton}>Volver</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.boton} title="Press me" onPress={handleSubmit} >

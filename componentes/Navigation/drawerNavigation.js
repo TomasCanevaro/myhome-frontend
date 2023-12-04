@@ -12,6 +12,11 @@ import CrearPropiedad4 from '../CrearPropiedad/crearPropiedad4';
 import CrearPropiedad5 from '../CrearPropiedad/crearPropiedad5';
 import * as SecureStore from 'expo-secure-store';
 import VerPropiedad from '../VerPropiedad/verPropiedad';
+import EditarPropiedad from '../EditarPropiedad/editarPropiedad';
+import EditarPropiedad2 from '../EditarPropiedad/editarPropiedad2';
+import EditarPropiedad3 from '../EditarPropiedad/editarPropiedad3';
+import EditarPropiedad4 from '../EditarPropiedad/editarPropiedad4';
+import EditarPropiedad5 from '../EditarPropiedad/editarPropiedad5';
 
 const Drawer = createDrawerNavigator()
 
@@ -38,6 +43,11 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="Crear propiedad: Paso 4" component={CrearPropiedad4} />
             <Drawer.Screen name="Crear propiedad: Paso 5" component={CrearPropiedad5} />
             <Drawer.Screen name="Ver propiedad" component={VerPropiedad} />
+            <Drawer.Screen name="Editar propiedad: Paso 1" component={EditarPropiedad} />
+            <Drawer.Screen name="Editar propiedad: Paso 2" component={EditarPropiedad2} />
+            <Drawer.Screen name="Editar propiedad: Paso 3" component={EditarPropiedad3} />
+            <Drawer.Screen name="Editar propiedad: Paso 4" component={EditarPropiedad4} />
+            <Drawer.Screen name="Editar propiedad: Paso 5" component={EditarPropiedad5} />
             <Drawer.Screen name="Cerrar sesión" component={PreLogin} />
         </Drawer.Navigator>
     )
