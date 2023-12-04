@@ -56,10 +56,10 @@ export default function UsuarioComunLogin({navigation}) {
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
+                    console.log(result.user.email.toString());
                     save('userToken',result.bearerToken)
-                    save('userID',result.user._id)
-                    save('userName',result.user.firstName)
-                    save('userMail',result.user.email)
+                    save('userID',result.user._id.toString())
+                    save('userMail',result.user.email.toString())
                     console.log(result)
                     navigation.navigate('mainPageUsuario')
                 } else {

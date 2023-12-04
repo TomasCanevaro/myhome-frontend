@@ -46,14 +46,14 @@ export default function MainPageUsuario({navigation}) {
         }
     }
 
-    const handleAddFavorite = async (property) => {
+    const handleAddFavorite = async (propertyID) => {
         var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("accept", "application/json");
             myHeaders.append("authorization", token);
             var raw = JSON.stringify({
                 "user": email,
-                "property": property,
+                "property": propertyID,
             });
             var requestOptions = {
                 method: 'POST',
@@ -61,11 +61,11 @@ export default function MainPageUsuario({navigation}) {
                 body: raw,
                 redirect: 'follow'
             };
-            fetch("https://myhome-backend.vercel.app/api/v1/favorites", requestOptions)
+            fetch("https://myhome-backend.vercel.app/api/v1/users/favorites", requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        Alert.alert('Éxito', 'El favorito fue creado con éxito', [
+                        Alert.alert('Éxito', 'La propiedad fue añadida a favoritos!', [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                         console.log(result)
@@ -115,6 +115,7 @@ export default function MainPageUsuario({navigation}) {
     return (
         <View style={styles.container}>
         <ScrollView>
+            <Text style={styles.textoh1}>Propiedades cercanas</Text>
             {misPropiedades.length === 0 ? (
                 <Text style={styles.noPropertiesText}>No hay propiedades para mostrar.</Text>
             ) : (
@@ -149,7 +150,7 @@ export default function MainPageUsuario({navigation}) {
 
 
                             <View style={styles.columna4}>
-                                <TouchableOpacity onPress={() => handleAddFavorite(property)}>
+                                <TouchableOpacity onPress={() => handleAddFavorite(property._id)}>
                                     <Image
                                         style={styles.clickableIcon}
                                         source={require('../../assets/favorite.png')}

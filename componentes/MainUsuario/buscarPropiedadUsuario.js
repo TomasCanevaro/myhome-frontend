@@ -8,12 +8,14 @@ export default function BuscarPropiedadUsuario({navigation}) {
     const [tipoPropiedad, setTipoPropiedad] = useState('');
     const [provincia, setProvincia] = useState('');
     const [localidad, setLocalidad] = useState('');
+    const [barrio, setBarrio] = useState('');
     const [cambio, setCambio] = useState('');
     const [desde, setDesde] = useState('');
     const [hasta, setHasta] = useState('');
     const [ambientes, setAmbientes] = useState('');
     const [dormitorios, setDormitorios] = useState('');
     const [baños, setBaños] = useState('');
+    const [antiguedad, setAntiguedad] = useState('');
     const [amenities, setAmenities] = useState('');
     const dataOperacion = [
         { label: 'Venta', value: 'Venta' },
@@ -23,39 +25,6 @@ export default function BuscarPropiedadUsuario({navigation}) {
     const dataTipoPropiedad = [
         { label: 'Casa', value: 'Casa' },
         { label: 'Departamento', value: 'Departamento' }
-    ];
-    const dataProvincia = [
-        { label: 'Buenos Aires', value: 'Buenos Aires' },
-        { label: 'CABA', value: 'CABA' },
-        { label: 'Cordoba', value: 'Cordoba' },
-        { label: 'Santa Fe', value: 'Santa Fe' },
-        { label: 'Mendoza', value: 'Mendoza' },
-        { label: 'Tucuman', value: 'Tucuman' },
-        { label: 'Salta', value: 'Salta' },
-        { label: 'Neuquen', value: 'Neuquen' },
-        { label: 'Rio Negro', value: 'Rio Negro' },
-        { label: 'Santa Cruz', value: 'Santa Cruz' },
-        { label: 'Chubut', value: 'Chubut' },
-        { label: 'Tierra del Fuego', value: 'Tierra del Fuego' },
-        { label: 'La Pampa', value: 'La Pampa' },
-        { label: 'Chaco', value: 'Chaco' },
-        { label: 'Formosa', value: 'Formosa' },
-        { label: 'Misones', value: 'Misones' },
-        { label: 'San Luis', value: 'San Luis' },
-        { label: 'San Juan', value: 'San Juan' },
-        { label: 'La Rioja', value: 'La Rioja' },
-        { label: 'Catamarca', value: 'Catamarca' },
-        { label: 'Santiago del Estero', value: 'Santiago del Estero' },
-        { label: 'Corrientes', value: 'Corrientes' },
-        { label: 'Entre Rios', value: 'Entre Rios' },
-        { label: 'Jujuy', value: 'Jujuy' }
-    ];
-    const dataLocalidad = [
-        { label: 'Buenos Aires', value: 'Buenos Aires' },
-        { label: 'La Lucila', value: 'La Lucila' },
-        { label: 'La Plata', value: 'La Plata' },
-        { label: 'Olavarria', value: 'Olavarria' },
-        { label: 'Mar del Plata', value: 'Mar del Plata' }
     ];
     const dataCambio = [
         { label: 'Pesos', value: 'ars' },
@@ -87,24 +56,26 @@ export default function BuscarPropiedadUsuario({navigation}) {
     ];
 
     const handleSubmit = async () => {
-        if (operacion === '' || tipoPropiedad === '' || provincia === '' || localidad === '' || cambio === '' ||
-            desde === '' || hasta === '' || ambientes === '' || dormitorios === '' || baños === '' || amenities === '') {
+        /*if (operacion === '' || tipoPropiedad === '' || provincia === '' || localidad === '' || barrio === '' || cambio === '' ||
+            desde === '' || hasta === '' || ambientes === '' || dormitorios === '' || baños === '' || antiguedad === '' || amenities === '') {
             Alert.alert('Error al continuar', 'Faltan rellenar algunos campos, por favor complételos', [
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
-        }
+        }*/
 
         navigation.navigate('Resultados Busqueda', {
             operacion: operacion,
             tipoPropiedad: tipoPropiedad,
             provincia: provincia,
             localidad: localidad,
+            barrio: barrio,
             cambio: cambio,
             desde: desde,
             hasta: hasta,
             ambientes: ambientes,
             dormitorios: dormitorios,
             baños: baños,
+            antiguedad: antiguedad,
             amenities: amenities
         });
 
@@ -112,12 +83,14 @@ export default function BuscarPropiedadUsuario({navigation}) {
         setTipoPropiedad('');
         setProvincia('');
         setLocalidad('');
+        setBarrio('');
         setCambio('');
         setDesde('');
         setHasta('');
         setAmbientes('');
         setDormitorios('');
         setBaños('');
+        setAntiguedad('');
         setAmenities('');
     }
 
@@ -159,37 +132,20 @@ export default function BuscarPropiedadUsuario({navigation}) {
                     }}
                 />
                 <Text style={styles.rawText}>Provincia</Text>
-                <Dropdown
+                <TextInput
                     style={styles.dropdown}
-                    placeholder=''
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    iconStyle={styles.iconStyle}
-                    data={dataProvincia}
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
                     value={provincia}
-                    onChange={item => {
-                        setProvincia(item.value);
-                    }}
-                />
+                    onChangeText={setProvincia} />
                 <Text style={styles.rawText}>Localidad</Text>
-                <Dropdown
+                <TextInput
                     style={styles.dropdown}
-                    placeholder=''
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    iconStyle={styles.iconStyle}
-                    data={dataLocalidad}
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
                     value={localidad}
-                    onChange={item => {
-                        setLocalidad(item.value);
-                    }}
-                />
+                    onChangeText={setLocalidad} />
+                <Text style={styles.rawText}>Barrio</Text>
+                <TextInput
+                    style={styles.dropdown}
+                    value={barrio}
+                    onChangeText={setBarrio} />
                 <Text style={styles.checkText}>Desde</Text>
                 <View style={styles.fila}>
                     <TextInput
@@ -284,6 +240,12 @@ export default function BuscarPropiedadUsuario({navigation}) {
                         setBaños(item.value);
                     }}
                 />
+                <Text style={styles.rawText}>Antiguedad Maxima</Text>
+                <TextInput
+                        style={styles.dropdown}
+                        value={antiguedad}
+                        onChangeText={setAntiguedad}
+                        inputMode='numeric' />
                 <Text style={styles.rawText}>Amenities</Text>
                 <MultiSelect
                     style={styles.dropdown}

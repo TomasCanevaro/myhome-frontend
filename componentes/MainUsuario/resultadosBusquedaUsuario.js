@@ -10,7 +10,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
     const [token, setToken] = useState('');
     const [email, setEmail] = useState('')
 
-    const { operacion, tipoPropiedad, provincia, localidad, cambio, desde, hasta, ambientes, dormitorios, baños, amenities } = route.params;
+    const { operacion, tipoPropiedad, provincia, localidad, barrio, cambio, desde, hasta, ambientes, dormitorios, baños, antiguedad, amenities } = route.params;
 
     const mostrarResultados = async () => {
         const url = `https://myhome-backend.vercel.app/api/v1/properties`;
@@ -32,20 +32,21 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
             if (result.success) {
                 console.log(result);
                 console.log(url)
-                /*
-                misResultados = misResultados.filter((property, index) => (
-                    property.propertyType.toLowerCase() == tipoPropiedad.toLowerCase() &&
-                    property.adress.province.toLowerCase() == provincia.toLowerCase() &&
-                    property.currency == cambio
-                    property.price > desde &&
-                    property.price < hasta
-                    property.rooms == ambientes &&
-                    property.bedrooms == dormitorios &&
-                    property.bathrooms == baños &&
-                    property.amenities == amenities
-                ))
-                */
-                setMisResultados(result.properties);
+                setMisResultados(result.properties.filter((property, index) => (
+                    ( operacion == '' || property.status.toLowerCase() == "en " + operacion.toLowerCase() ) &&
+                    ( tipoPropiedad == '' || property.propertyType.toLowerCase() == tipoPropiedad.toLowerCase() ) &&
+                    ( provincia == '' || property.adress.province.toLowerCase() == provincia.toLowerCase() ) &&
+                    ( localidad == '' || property.adress.town.toLowerCase() == localidad.toLowerCase() ) &&
+                    ( barrio == '' || property.adress.district.toLowerCase() == barrio.toLowerCase() ) &&
+                    ( cambio == '' || property.currency == cambio ) &&
+                    ( desde == '' || property.price > desde ) &&
+                    ( hasta == '' || property.price < hasta ) &&
+                    ( ambientes == '' || property.rooms == ambientes ) &&
+                    ( dormitorios == '' || property.bedrooms == dormitorios ) &&
+                    ( baños == '' || property.bathrooms == baños ) &&
+                    ( antiguedad == '' || property.age < antiguedad ) &&
+                    ( amenities == '' || property.amenities == amenities )
+                )));
             } else {
                 console.log('Error de backend:', result);
                 console.log(result.success);
@@ -60,14 +61,16 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
         }
     }
 
-    const handleAddFavorite = async (property) => {
+    const handleAddFavorite = async (propertyID) => {
         var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("accept", "application/json");
             myHeaders.append("authorization", token);
+            console.log(email);
+            console.log(propertyID);
             var raw = JSON.stringify({
                 "user": email,
-                "property": property,
+                "property": propertyID,
             });
             var requestOptions = {
                 method: 'POST',
@@ -75,11 +78,11 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
                 body: raw,
                 redirect: 'follow'
             };
-            fetch("https://myhome-backend.vercel.app/api/v1/favorites", requestOptions)
+            fetch("https://myhome-backend.vercel.app/api/v1/users/favorites", requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        Alert.alert('Éxito', 'El favorito fue creado con éxito', [
+                        Alert.alert('Éxito', 'La propiedad fue añadida a favoritos!', [
                             { text: 'OK', onPress: () => console.log('OK Pressed') },
                         ]);
                         console.log(result)
@@ -93,6 +96,10 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
                     }
                 })
                 .catch(error => console.log('error', error));
+    }
+
+    const borrarFiltros = async => {
+        setMisResultados([]);
     }
 
     useEffect(() => {
@@ -163,7 +170,7 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
 
 
                             <View style={styles.columna4}>
-                                <TouchableOpacity onPress={() => handleAddFavorite(property)}>
+                                <TouchableOpacity onPress={() => handleAddFavorite(property._id)}>
                                     <Image
                                         style={styles.clickableIcon}
                                         source={require('../../assets/favorite.png')}
@@ -174,6 +181,11 @@ export default function ResultadosBusquedaUsuario({ route, navigation }) {
                     </Card>
                 ))
             )}
+            <View style={styles.fila}>
+                <TouchableOpacity style={styles.boton} title="Press me" onPress={borrarFiltros} >
+                    <Text style={styles.textoBoton}>Borrar filtros</Text>
+                </TouchableOpacity>
+            </View>
         </ScrollView>
         </View>
     );
@@ -228,5 +240,20 @@ const styles = StyleSheet.create({
         width: 35,
         height: 35,
         marginStart: 10
+    },
+    boton: {
+        alignItems: 'center',
+        backgroundColor: '#284B63',
+        padding: 15,
+        marginTop: 20,
+        marginRight: 10,
+        marginLeft: 10,
+        borderRadius: 10,
+        width: 150,
+    },
+    textoBoton: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'white'
     }
 });
