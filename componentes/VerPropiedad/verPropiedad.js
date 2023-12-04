@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, ActivityIndicator, Linking, View, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
+import { StyleSheet, Text, Linking, View, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import * as Location from 'expo-location';
 import * as SecureStore from 'expo-secure-store';
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function VerPropiedad({ route, navigation }) {
-
     const [propiedad, setPropiedad] = useState({});
     const { propertyID } = route.params;
     const [token, setToken] = useState('');
@@ -85,8 +83,6 @@ export default function VerPropiedad({ route, navigation }) {
         console.log(propiedad);
         console.log(propiedad.photos)
     }, [propiedad]);
-
-
 
     if (!propiedad || !propiedad.address) {
         return null;
@@ -217,6 +213,10 @@ export default function VerPropiedad({ route, navigation }) {
                         <View style={styles.fila}>
                             <Text style={styles.rawText}>Metros cuadrados descubiertos: </Text>
                             <Text style={styles.rawText2}>{propiedad.squareMeters.uncovered}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Ambientes: </Text>
+                            <Text style={styles.rawText2}>{propiedad.rooms}</Text>
                         </View>
                         <View style={styles.fila}>
                             <Text style={styles.rawText}>Habitaciones: </Text>

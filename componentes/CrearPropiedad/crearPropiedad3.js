@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 
 export default function CrearPropiedad3({ route, navigation }) {
-
     const [m2cub, setM2cub] = useState('');
     const [m2semi, setM2semi] = useState('');
     const [m2desc, setM2desc] = useState('');
@@ -10,7 +9,6 @@ export default function CrearPropiedad3({ route, navigation }) {
     const [ambientes, setAmbientes] = useState('');
     const [habitaciones, setHabitaciones] = useState('');
     const [banos, setBanos] = useState('');
-
 
     const { selectedImages, calle, numero, piso, departamento, localidad, ciudad, provincia, pais, latitud, longitud, tipoPropiedad } = route.params;
 

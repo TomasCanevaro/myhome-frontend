@@ -45,7 +45,6 @@ export default function CrearPropiedad({ navigation }) {
             quality: 1,
         });
         if (!result.canceled) {
-            // Actualizar el estado con la URI de la imagen
             setImages([...images, result.assets[0].uri]);
         }
     };
@@ -68,7 +67,6 @@ export default function CrearPropiedad({ navigation }) {
             myHeaders.append("accept", "application/json");
             myHeaders.append("authorization", token);
 
-            // Función para enviar una imagen al servidor
             const sendImage = async (image, index) => {
                 try {
                     const formData = new FormData();
@@ -86,48 +84,40 @@ export default function CrearPropiedad({ navigation }) {
                     };
             
                     const response = await fetch("https://myhome-backend.vercel.app/api/v1/properties/photo", requestOptions);
-            
-                    // Verificar si la respuesta indica éxito (código 2xx)
                     if (!response.ok) {
                         throw new Error(`Error al procesar imagen ${index}. Código de estado: ${response.status}`);
                     }
-            
                     return response;
                 } catch (error) {
                     console.error(`Error al procesar imagen ${index}:`, error.message);
-                    throw error; // Puedes manejar el error según tus necesidades
+                    throw error;
                 }
             };
-            
-            // Función para enviar imágenes secuencialmente
+
             const sendImagesSequentially = async () => {
                 const processedImages = [];
                 for (let index = 0; index < images.length; index++) {
                     try {
                         const response = await sendImage(images[index], index);
-                        const result = await response.json(); // Supongo que el servidor devuelve JSON
-                        const imageUrl = result.urlImage; // Ajusta esto según la estructura real de la respuesta del servidor
+                        const result = await response.json();
+                        const imageUrl = result.urlImage;
                         processedImages.push(imageUrl);
                     } catch (error) {
                         console.error('Error al procesar imágenes:', error.message);
-                        // Puedes manejar el error según tus necesidades
                     }
                 }
                 return processedImages;
             };
 
-            // Llamar a la función para enviar imágenes secuencialmente
             const processedImages = await sendImagesSequentially();
             
             console.log('Todas las imágenes fueron procesadas con éxito');
             console.log('Imágenes procesadas:', processedImages);
 
-            // Navegar a la siguiente pantalla solo después de procesar todas las imágenes
             navigation.navigate('Crear propiedad: Paso 2', { selectedImages: processedImages });
             setImages([]);
         } catch (error) {
             console.error('Error al procesar imágenes:', error.message);
-            // Maneja el error según tus necesidades
         }
     }
 };
