@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { contactBackend } from '../../API';
+import * as SecureStore from 'expo-secure-store';
 
 export default function RegisterInmobiliaria({ navigation }) {
     const [nombre, setNombre] = useState('');
@@ -13,11 +15,13 @@ export default function RegisterInmobiliaria({ navigation }) {
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("accept", "application/json");
+        myHeaders.append("Authorization", `${token}`);
 
         var raw = JSON.stringify({
             "firstName": nombre,
             "lastName": apellido,
             "email": email,
+            "password": ""
         });
 
         var requestOptions = {
@@ -26,7 +30,6 @@ export default function RegisterInmobiliaria({ navigation }) {
             body: raw,
             redirect: 'follow'
         };
-
 
         fetch(`https://myhome-backend.vercel.app/api/v1/users/${userID}`, requestOptions)
                 .then(response => response.json())
@@ -92,7 +95,7 @@ export default function RegisterInmobiliaria({ navigation }) {
                 if (storedTokenKey) {
                     setToken(storedTokenKey);
                 }
-                if (storedEmailKey) {
+                if (storedUserIDKey) {
                     setUserID(storedUserIDKey);
                 }
             } catch (error) {
@@ -102,6 +105,7 @@ export default function RegisterInmobiliaria({ navigation }) {
         fetchData();
     }, []);
 
+    /*
     useFocusEffect(
         React.useCallback(() => {
             const fetchFavoritos = async () => {
@@ -112,6 +116,7 @@ export default function RegisterInmobiliaria({ navigation }) {
             fetchFavoritos();
         }, [token, userID])
     );
+    */
     
     return (
         <View style={styles.container}>

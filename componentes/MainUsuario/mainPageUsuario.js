@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'; 
 import { StyleSheet, Text, Image, View, TouchableOpacity, Alert } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import Card from '../Reusables/card';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
@@ -113,6 +114,7 @@ export default function MainPageUsuario({navigation}) {
 
     return (
         <View style={styles.container}>
+        <ScrollView>
             {misPropiedades.length === 0 ? (
                 <Text style={styles.noPropertiesText}>No hay propiedades para mostrar.</Text>
             ) : (
@@ -158,6 +160,7 @@ export default function MainPageUsuario({navigation}) {
                     </Card>
                 ))
             )}
+        </ScrollView>
         </View>
     );
 }

@@ -164,6 +164,8 @@ export default function VerPropiedad({ route, navigation }) {
                         >
                             <Text style={styles.textoBoton}>Abrir en Maps</Text>
                         </TouchableOpacity>
+                    </View>
+                    <View style={styles.fila}>
                         <TouchableOpacity
                             style={styles.boton}
                             title="Press me"
@@ -178,14 +180,14 @@ export default function VerPropiedad({ route, navigation }) {
                         >
                             <Text style={styles.textoBoton}>Visita</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.boton}
-                            title="Press me"
-                            onPress={() => {}}
-                        >
-                            <Text style={styles.textoBoton}>Reservar</Text>
-                        </TouchableOpacity>
                     </View>
+                    <TouchableOpacity
+                        style={styles.boton}
+                        title="Press me"
+                        onPress={() => {}}
+                    >
+                        <Text style={styles.textoBoton}>Reservar</Text>
+                    </TouchableOpacity>
                 </React.Fragment>
             )}
         </ScrollView>

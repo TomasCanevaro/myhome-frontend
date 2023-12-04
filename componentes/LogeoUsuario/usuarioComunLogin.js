@@ -21,11 +21,6 @@ export default function UsuarioComunLogin({navigation}) {
         validateForm(); 
     }, [email, password]); 
 
-    const Alerta = () =>
-    Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
-      ]);
-
     const validateForm = () => { 
         let errors = {}; 
         if (!email) { 
@@ -41,29 +36,40 @@ export default function UsuarioComunLogin({navigation}) {
     }; 
 
     const logearUsuario = async () => {
-        let data = {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("accept", "application/json");
+
+        var raw = JSON.stringify({
             "email": email,
             "password": password
-        };
-        try {
-            if (isFormValid) {
-                let res = await contactBackend("/auths", false, "POST", null, data, false, 200)
-                console.log(res)
-                save('userToken',res.bearerToken)
-                save('userID',res.user._id)
-                save('userName',res.user.firstName)
-                save('userMail',res.user.email)
-                navigation.navigate('mainPageUsuario')
+        });
 
-            }else{
-                Alert.alert('Error al logear', 'Hubo un error al acceder, reingrese los datos nuevamente', [
-                    {text: 'OK', onPress: () => console.log('OK Pressed')},
-                  ]);
-            }
-        } catch (e) {
-            console.log(e)
-            Alerta()
-        }
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("https://myhome-backend.vercel.app/api/v1/auths", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    save('userToken',result.bearerToken)
+                    save('userID',result.user._id)
+                    save('userName',result.user.firstName)
+                    save('userMail',result.user.email)
+                    console.log(result)
+                    navigation.navigate('mainPageUsuario')
+                } else {
+                    console.log('Error de backend:', result);
+                    Alert.alert('Error', result.message, [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ]);
+                }
+            })
+            .catch(error => console.log('error', error));
     }
 
     return (
