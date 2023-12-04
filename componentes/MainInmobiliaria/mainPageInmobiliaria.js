@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
-
-
 export default function MainPageInmobiliaria() {
     const [fantasyName, setFantasyName] = useState(''); 
+    
     async function getData() {
         const userTokenKey = 'userToken'
         const fantasyNameKey = 'fantasyName'

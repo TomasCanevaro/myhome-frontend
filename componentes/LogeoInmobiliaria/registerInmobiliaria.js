@@ -28,7 +28,6 @@ export default function RegisterInmobiliaria({ navigation }) {
             redirect: 'follow'
         };
 
-
         if (password === rePassword){
         fetch("https://myhome-backend.vercel.app/api/v1/real-state-companies", requestOptions)
                 .then(response => response.json())
@@ -52,8 +51,6 @@ export default function RegisterInmobiliaria({ navigation }) {
                     { text: 'OK', onPress: () => console.log('OK Pressed') },
                 ]);
             }
-        
-        
     }
     
     return (

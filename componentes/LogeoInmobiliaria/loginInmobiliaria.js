@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
-import { contactBackend } from '../../API';
 import * as SecureStore from 'expo-secure-store';
 
 

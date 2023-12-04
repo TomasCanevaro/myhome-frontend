@@ -46,12 +46,6 @@ export default function MisPropiedades({ navigation }) {
         }
     }
 
-    const proximamente = async => {
-        Alert.alert('Próximamente', 'Todavía no es posible editar propiedades', [
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
-        ]);
-    }
-
     const handleDeleteProperty = async (propertyId) => {
         Alert.alert(
             'Confirmar',
