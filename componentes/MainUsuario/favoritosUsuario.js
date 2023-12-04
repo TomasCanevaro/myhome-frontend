@@ -11,7 +11,6 @@ export default function FavoritosUsuario({navigation}) {
 
     const mostrarFavoritos = async () => {
         const url = `https://myhome-backend.vercel.app/api/v1/users/${userID}/favorites`;
-        console.log(url);
         const myHeaders = new Headers({
             'accept': 'application/json',
             'authorization': `${token}`,

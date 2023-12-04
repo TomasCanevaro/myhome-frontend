@@ -75,6 +75,7 @@ export default function RegisterInmobiliaria({ navigation }) {
                                 throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
                             }
                             console.log('Usuario borrado correctamente');
+                            navigation.navigate('bienvenida')
                         } catch (error) {
                             console.error('Error borrando usuario:', error.message);
                         }
