@@ -73,11 +73,11 @@ export default function VerPropiedad({ route, navigation }) {
 
     useFocusEffect(
         React.useCallback(() => {
-        if (token && propertyID) {
-            mostrarPropiedad(token, propertyID);
-            console.log(propiedad)
-        }
-    }, [token, propertyID]));
+            if (token && propertyID) {
+                mostrarPropiedad(token, propertyID);
+                console.log(propiedad)
+            }
+        }, [token, propertyID]));
 
     useEffect(() => {
         console.log(propiedad);
@@ -252,6 +252,14 @@ export default function VerPropiedad({ route, navigation }) {
                                 ))}
                             </View>
                         </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Ubicación: </Text>
+                            <Text style={styles.rawText2}>{propiedad.frontOrBack}</Text>
+                        </View>
+                        <View style={styles.fila}>
+                            <Text style={styles.rawText}>Orientación: </Text>
+                            <Text style={styles.rawText2}>{propiedad.orientation}</Text>
+                        </View>
                     </View>
 
                     <View style={styles.form}>
@@ -337,7 +345,7 @@ const styles = StyleSheet.create({
     },
     selectedImage: {
         width: 300,
-        height: 300, 
+        height: 300,
         resizeMode: 'cover',
     },
     input: {
